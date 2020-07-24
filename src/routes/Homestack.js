@@ -3,14 +3,22 @@ import { createAppContainer} from 'react-navigation';
 import home from '../components/Home';
 import familyadd from '../components/familyadd';
 import fampage from '../components/Familypage';
-import datcheck from '../components/databasecheck';
+// import createemp from '../components/createemployee';
+// import datcheck from '../components/datafrommysql';
 
 
 const valstack= {
 
-    databasecheck :
+    // databasecheck :
+    // {
+    //     screen:datcheck,
+    // },
+    FamPage :
     {
-        screen:datcheck,
+        screen : fampage,
+        navigationOptions: {
+            title : null, 
+            }
     },
     Home :
     {
@@ -21,13 +29,14 @@ const valstack= {
             },
 
     },
-    FamPage :
-    {
-        screen : fampage,
-        navigationOptions: {
-            title : null, 
-            }
-    },
+    
+    // CreateEmp : 
+    // {
+    //     screen : createemp,
+    //     navigationOptions: {
+    //         title : null, 
+    //         }
+    // },
     AddFam :
     {
         screen : familyadd,

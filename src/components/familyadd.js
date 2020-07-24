@@ -5,7 +5,7 @@ import { createStackNavigator} from 'react-navigation-stack';
 
 
 export default function addfamily({navigation}) {
-    const [username, setusername] = useState('Sujith');
+    const [username, setusername] = useState('');
     return (
       <View >
         <Text style={styles.textstyle}>Family Tree Name</Text>
