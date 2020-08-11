@@ -8,7 +8,7 @@ const [username, setusername] = useState('');
 const [FatherName, setFatherName] = useState('');
 const [MotherName, setMotherName] = useState('');
 const submitData = ()=>{
-      fetch("http://32cd3e2070d0.ngrok.io/send-data",{
+      fetch("http://32cd3e2070d0.ngrok.io/",{
       method:"post",
       headers:{
       'Content-Type': 'application/json',
