@@ -1,11 +1,12 @@
-﻿﻿import React, { Component, useState,useEffect } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, ScrollView, value } from 'react-native';
+﻿﻿import React, { Component, useState, useEffect } from 'react';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, ScrollView, value, BackHandler } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
 // import {Picker} from '@react-native-community/picker';
 import { Dropdown } from 'react-native-material-dropdown';
 // import { response } from 'express';
 myRef = React.createRef();
 var originalFather = [];
+// var isfetchingnow = true;
 
 export default function Aboutscreen({ navigation }) {
       // var usernameval = navigation.getParam('username');
@@ -13,36 +14,86 @@ export default function Aboutscreen({ navigation }) {
       const [FatherName, setFatherName] = useState('');
       const [MotherName, setMotherName] = useState('');
       const [value, setValue] = useState();
-      const [items, setItems] = useState([])
-      var fatherArray = [];
+      const [isLoading, setIsLoading] = useState(false);
+      const [fatherval, setfatherval] = useState([])
+      const [motherval, setmotherval] = useState([])
 
-      // useEffect(() => {
-      //       getfatherdata();
-      //     });
+      var fatherArray = [];
+      var motherArray = [];
+      useEffect(() => {
+            setTimeout(() => getfatherdata(), 1500)
+            setTimeout(() => getMotherdata(), 1500)
+            const backAction = () => {
+                  Alert.alert("Are you sure you want to go back?", [
+                        {
+                              text: "Cancel",
+                              onPress: () => null,
+                              style: "cancel"
+                        },
+                        { text: "YES", onPress: () => BackHandler.exitApp() }
+                  ]);
+                  return true;
+            };
+
+            const backHandler = BackHandler.addEventListener(
+                  "hardwareBackPress",
+                  backAction
+            );
+
+            return () => backHandler.remove();
+      }, []);
+
 
       function getfatherdata() {
+            setIsLoading(true);
             return fetch('http://192.168.43.131:3000/getfatherdata')
                   .then(response => response.json())
                   .then(fathernames => {
                         originalFather = fathernames;
                         fathernames.forEach(element => {
                               fatherArray.push(
-                                    {value : element.Name} )
+                                    { value: element.Name })
                         });
-                        setItems(...items, fatherArray)
-                        console.log(fathernames)
+                        setfatherval(...fatherval, fatherArray)
+                        console.log("fathername is" + JSON.stringify(originalFather))
+                        setIsLoading(false);
+
                   })
 
                   .catch(err => {
                         Alert.alert("Error" + err);
                         console.log(err)
+                        setIsLoading(false);
                   })
       }
+     
+      function getMotherdata() {
+            setIsLoading(true);
+            return fetch('http://192.168.43.131:3000/getMotherdata')
+            .then(response => response.json())
+            .then(mothernames => {
+            originalMother = mothernames;
+            mothernames.forEach(element => {
+            motherArray.push(
+            { value: element.Name })
+            });
+            setmotherval(...motherval, motherArray)
+            console.log("MotherName is" + JSON.stringify(originalMother))
+            setIsLoading(false);
+            
+            })
+            
+            .catch(err => {
+            Alert.alert("Error" + err);
+            console.log(err)
+            setIsLoading(false);
+            })
+            }
 
       const submitData = () => {
-            // let obj = JSON.parse(JSON.stringify(originalFather[myRef.current.selectedIndex().toString()]))
             let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             let selectedFatherId = obj._id.toString()
+            console.log(selectedFatherId)
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
                   headers: {
@@ -70,7 +121,14 @@ export default function Aboutscreen({ navigation }) {
                   })
       }
 
+      // if (isfetchingnow) {
 
+      //       return (<View style={styles.root}>
+      //             <Text> loading.....</Text>
+      //       </View>
+      //       )
+      // }
+      // else {
       return (
             <View style={styles.root}>
                   <TextInput style={styles.inputda}
@@ -81,6 +139,16 @@ export default function Aboutscreen({ navigation }) {
 
                   />
 
+                  <Dropdown style={StyleSheet.drop}
+                        label='select father from the list'
+                        baseColor="green"
+                        ref={myRef}
+                        itemColor="red"
+                        selectedItemColor="blue"
+                        data={fatherval}
+                        animationDuration={0}
+
+                  />
 
                   <TextInput style={styles.inputda}
                         label="FatherName"
@@ -88,17 +156,6 @@ export default function Aboutscreen({ navigation }) {
                         value={FatherName}
                         onChangeText={text => setFatherName(text)}
                   />
-                  <Dropdown style={StyleSheet.drop}
-                        label='select father from the list'
-                        baseColor="green"
-                        ref={myRef}
-                        itemColor="red"
-                        selectedItemColor="blue"
-                        data={items}
-                       animationDuration={0} 
-                        
-                  />
-
                   {/* <View >
                         <RadioButton.Group onValueChange={value => setValue(value)} value={value}>
                               <View style={styles.radio} >
@@ -109,6 +166,16 @@ export default function Aboutscreen({ navigation }) {
                               </View>
                         </RadioButton.Group>
                   </View> */}
+                  <Dropdown style={StyleSheet.drop}
+                        label='select Mother from the list'
+                        baseColor="green"
+                        ref={myRef}
+                        itemColor="red"
+                        selectedItemColor="blue"
+                        data={motherval}
+                        animationDuration={0}
+
+                  />
                   <TextInput style={styles.inputda}
                         label="MotherName"
                         mode="outlined"
@@ -130,13 +197,13 @@ export default function Aboutscreen({ navigation }) {
                   </View>
 
                   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                  <Button
+                        {/* <Button
                               style={styles.submitButtonr}
                               mode="contained"
                               onPress={() => getfatherdata()}
                               title="Submit">
                               fetch
-                        </Button>
+                        </Button> */}
 
                         <Button
                               style={styles.submitButtonr}
