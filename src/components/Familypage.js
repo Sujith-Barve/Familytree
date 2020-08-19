@@ -2,7 +2,9 @@
 import { Alert, View, Text, StyleSheet, TouchableOpacity, ScrollView, value, BackHandler } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
 // import {Picker} from '@react-native-community/picker';
-import { Dropdown } from 'react-native-material-dropdown';
+// import { Dropdown } from 'react-native-material-dropdown';
+import Icon from 'react-native-vector-icons/Feather';
+import DropDownPicker from 'react-native-dropdown-picker';
 // import { response } from 'express';
 myRef = React.createRef();
 var originalFather = [];
@@ -17,11 +19,15 @@ export default function Aboutscreen({ navigation }) {
       const [isLoading, setIsLoading] = useState(false);
       const [fatherval, setfatherval] = useState([])
       const [motherval, setmotherval] = useState([])
-
+      const [dropval, setdropval] = useState(
+            {
+                  country: 'uk'
+            }
+      );
       var fatherArray = [];
       var motherArray = [];
       useEffect(() => {
-            setTimeout(() => getfatherdata(), 1500)
+            // setTimeout(() => getfatherdata(), 1500)
             setTimeout(() => getMotherdata(), 1500)
             const backAction = () => {
                   Alert.alert("Are you sure you want to go back?", [
@@ -50,45 +56,50 @@ export default function Aboutscreen({ navigation }) {
                   .then(response => response.json())
                   .then(fathernames => {
                         originalFather = fathernames;
-                        fathernames.forEach(element => {
-                              fatherArray.push(
-                                    { value: element.Name })
-                        });
+      const motherArray= originalMother.map(element => {
+            return {
+                ...element,
+                label: element.Name ,value:element._id,
+
+            };
+        });
                         setfatherval(...fatherval, fatherArray)
                         console.log("fathername is" + JSON.stringify(originalFather))
                         setIsLoading(false);
 
                   })
-
                   .catch(err => {
                         Alert.alert("Error" + err);
                         console.log(err)
                         setIsLoading(false);
                   })
       }
-     
+
       function getMotherdata() {
             setIsLoading(true);
             return fetch('http://192.168.43.131:3000/getMotherdata')
-            .then(response => response.json())
-            .then(mothernames => {
-            originalMother = mothernames;
-            mothernames.forEach(element => {
-            motherArray.push(
-            { value: element.Name })
-            });
-            setmotherval(...motherval, motherArray)
-            console.log("MotherName is" + JSON.stringify(originalMother))
-            setIsLoading(false);
-            
-            })
-            
-            .catch(err => {
-            Alert.alert("Error" + err);
-            console.log(err)
-            setIsLoading(false);
-            })
-            }
+                  .then(response => response.json())
+                  .then(mothernames => {
+                        originalMother= mothernames;
+                        console.log("Resp data is" + originalMother);                        const motherArray= originalMother.map(element => {
+                              return {
+                                  ...element,
+                                  label: element.Name ,value:element._id,
+
+                              };
+                          });
+                          
+                        setmotherval(...motherval, motherArray)
+                        console.log("MotherName is" + JSON.stringify(originalMother))
+                        setIsLoading(false);
+
+                  })
+                  .catch(err => {
+                        Alert.alert("Error" + err);
+                        console.log(err)
+                        setIsLoading(false);
+                  })
+      }
 
       const submitData = () => {
             let obj = originalFather[parseInt(myRef.current.selectedIndex())]
@@ -138,8 +149,8 @@ export default function Aboutscreen({ navigation }) {
                         onChangeText={text => setusername(text)}
 
                   />
-
-                  <Dropdown style={StyleSheet.drop}
+                  {/* <View style={styles.drop}>
+                  <Dropdown
                         label='select father from the list'
                         baseColor="green"
                         ref={myRef}
@@ -149,6 +160,25 @@ export default function Aboutscreen({ navigation }) {
                         animationDuration={0}
 
                   />
+                  </View> */}
+
+                  {/* <DropDownPicker
+                        items={fatherval}
+                        placeholder="Select Father From the list"
+                        containerStyle={{ height: 40 }}
+                        selectedLabelStyle={{ color: 'green' }}
+                        activeItemStyle={{ backgroundColor: "green" }}
+                        style={styles.drop}
+                        itemStyle={{
+                              justifyContent: 'flex-start'
+                        }}
+                        selectedtLabelStyle={{
+                              color: 'blue'
+                        }}
+                        dropDownStyle={{ backgroundColor: '#fafafa' }}
+                  /> */}
+
+
 
                   <TextInput style={styles.inputda}
                         label="FatherName"
@@ -166,6 +196,7 @@ export default function Aboutscreen({ navigation }) {
                               </View>
                         </RadioButton.Group>
                   </View> */}
+                  {/* <View style={styles.drop}>
                   <Dropdown style={StyleSheet.drop}
                         label='select Mother from the list'
                         baseColor="green"
@@ -176,6 +207,21 @@ export default function Aboutscreen({ navigation }) {
                         animationDuration={0}
 
                   />
+                  </View> */}
+                  <DropDownPicker
+                        items={motherval}
+                        placeholder="Select Mother From the list"
+                        selectedLabelStyle={{ color: 'green' }}
+                        activeItemStyle={{ backgroundColor: "green" }}
+                        containerStyle={{ height: 40 }}
+                        style={styles.drop}
+                        itemStyle={{
+                              justifyContent: 'flex-start'
+                        }}
+                        showArrow={true}
+                        dropDownStyle={{ backgroundColor: '#fafafa' }}
+                  />
+
                   <TextInput style={styles.inputda}
                         label="MotherName"
                         mode="outlined"
@@ -246,7 +292,18 @@ const styles = StyleSheet.create({
       },
       drop:
       {
-            margin: 10,
+            backgroundColor: '#fafafa',
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+            marginLeft: 8,
+            marginRight: 8,
+            marginTop: 5,
+            padding: 50,
+
+
+
       }
 
 });
