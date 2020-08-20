@@ -1,36 +1,34 @@
 ﻿﻿import React, { Component, useState, useEffect } from 'react';
 import { Alert, View, Text, StyleSheet, TouchableOpacity, ScrollView, value, BackHandler } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
-// import {Picker} from '@react-native-community/picker';
-// import { Dropdown } from 'react-native-material-dropdown';
 import Icon from 'react-native-vector-icons/Feather';
 import DropDownPicker from 'react-native-dropdown-picker';
-// import { response } from 'express';
+import { sub } from 'react-native-reanimated';
 myRef = React.createRef();
 var originalFather = [];
-// var isfetchingnow = true;
+var submitpercentage = 1;
 
 export default function Aboutscreen({ navigation }) {
       // var usernameval = navigation.getParam('username');
       const [username, setusername] = useState('');
       const [FatherName, setFatherName] = useState('');
       const [MotherName, setMotherName] = useState('');
-      const [value, setValue] = useState();
+      const [WifeName, setWifeName] = useState('');
+      const [Gendervalue, setGendervalue] = useState();
       const [isLoading, setIsLoading] = useState(false);
-      const [fatherval, setfatherval] = useState([])
-      const [motherval, setmotherval] = useState([])
-      const [dropval, setdropval] = useState(
-            {
-                  country: 'uk'
-            }
-      );
+      const [fatherval, setfatherval] = useState([]);
+      const [motherval, setmotherval] = useState([]);
+      const[martialvalue,setmartialvalue]=useState([]);
+      const isEnabled = FatherName.length > 0
+            && MotherName.length > 0 && username.length > 0;
+      const [motherVisible, setMotherVisiblity] = useState(true);
       var fatherArray = [];
       var motherArray = [];
       useEffect(() => {
-            // setTimeout(() => getfatherdata(), 1500)
+            setTimeout(() => getfatherdata(), 1500)
             setTimeout(() => getMotherdata(), 1500)
             const backAction = () => {
-                  Alert.alert("Are you sure you want to go back?", [
+                  Alert.alert("Hold on!", "Are you sure you want to go back?", [
                         {
                               text: "Cancel",
                               onPress: () => null,
@@ -49,20 +47,19 @@ export default function Aboutscreen({ navigation }) {
             return () => backHandler.remove();
       }, []);
 
-
       function getfatherdata() {
             setIsLoading(true);
             return fetch('http://192.168.43.131:3000/getfatherdata')
                   .then(response => response.json())
                   .then(fathernames => {
                         originalFather = fathernames;
-      const motherArray= originalMother.map(element => {
-            return {
-                ...element,
-                label: element.Name ,value:element._id,
+                        const fatherArray = originalFather.map(element => {
+                              return {
+                                    ...element,
+                                    label: element.Name, value: element._id,
 
-            };
-        });
+                              };
+                        });
                         setfatherval(...fatherval, fatherArray)
                         console.log("fathername is" + JSON.stringify(originalFather))
                         setIsLoading(false);
@@ -80,15 +77,15 @@ export default function Aboutscreen({ navigation }) {
             return fetch('http://192.168.43.131:3000/getMotherdata')
                   .then(response => response.json())
                   .then(mothernames => {
-                        originalMother= mothernames;
-                        console.log("Resp data is" + originalMother);                        const motherArray= originalMother.map(element => {
+                        originalMother = mothernames;
+                        console.log("Resp data is" + originalMother); const motherArray = originalMother.map(element => {
                               return {
-                                  ...element,
-                                  label: element.Name ,value:element._id,
+                                    ...element,
+                                    label: element.Name, value: element._id,
 
                               };
-                          });
-                          
+                        });
+
                         setmotherval(...motherval, motherArray)
                         console.log("MotherName is" + JSON.stringify(originalMother))
                         setIsLoading(false);
@@ -121,7 +118,7 @@ export default function Aboutscreen({ navigation }) {
                   .then(data => {
                         console.log(data);
                         Alert.alert(`Data is saved successfuly`)
-                        // navigation.navigate('Home');
+                        navigation.navigate('Home');
                         setFatherName('')
                         setMotherName('');
                         setusername('');
@@ -130,16 +127,8 @@ export default function Aboutscreen({ navigation }) {
                   .catch(err => {
                         Alert.alert("someting went wrong either user exists or unable to connect to server");
                   })
+
       }
-
-      // if (isfetchingnow) {
-
-      //       return (<View style={styles.root}>
-      //             <Text> loading.....</Text>
-      //       </View>
-      //       )
-      // }
-      // else {
       return (
             <View style={styles.root}>
                   <TextInput style={styles.inputda}
@@ -149,25 +138,32 @@ export default function Aboutscreen({ navigation }) {
                         onChangeText={text => setusername(text)}
 
                   />
-                  {/* <View style={styles.drop}>
-                  <Dropdown
-                        label='select father from the list'
-                        baseColor="green"
-                        ref={myRef}
-                        itemColor="red"
-                        selectedItemColor="blue"
-                        data={fatherval}
-                        animationDuration={0}
+                  <View >
+                        <RadioButton.Group onValueChange={martialvalue => setmartialvalue(martialvalue)} value={martialvalue}>
+                              <View style={styles.radio} >
+                                    <RadioButton value="Bachelor" />
+                                    <Text style={styles.radiotext}>Bachelor</Text>
+                                    <RadioButton value="Married" />
+                                    <Text style={styles.radiotext}>Married</Text>
 
+                              </View>
+                        </RadioButton.Group>
+                  </View>
+
+                  <TextInput style={styles.inputda}
+                        label="FatherName"
+                        mode="outlined"
+                        value={FatherName}
+                        onChangeText={text => setFatherName(text)}
                   />
-                  </View> */}
 
-                  {/* <DropDownPicker
+                  <DropDownPicker
+                        id="dpd"
                         items={fatherval}
                         placeholder="Select Father From the list"
                         containerStyle={{ height: 40 }}
-                        selectedLabelStyle={{ color: 'green' }}
-                        activeItemStyle={{ backgroundColor: "green" }}
+                        selectedLabelStyle={{ color: '#000000' }}
+                        activeItemStyle={{ backgroundColor: "#38ACEC" }}
                         style={styles.drop}
                         itemStyle={{
                               justifyContent: 'flex-start'
@@ -176,43 +172,21 @@ export default function Aboutscreen({ navigation }) {
                               color: 'blue'
                         }}
                         dropDownStyle={{ backgroundColor: '#fafafa' }}
-                  /> */}
 
+                  />
 
 
                   <TextInput style={styles.inputda}
-                        label="FatherName"
+                        label="MotherName"
                         mode="outlined"
-                        value={FatherName}
-                        onChangeText={text => setFatherName(text)}
+                        value={MotherName}
+                        onChangeText={text => setMotherName(text)}
                   />
-                  {/* <View >
-                        <RadioButton.Group onValueChange={value => setValue(value)} value={value}>
-                              <View style={styles.radio} >
-                                    <Text style={styles.radiotext}>Male</Text>
-                                    <RadioButton value="Bachelor" />
-                                    <Text style={styles.radiotext}>Female</Text>
-                                    <RadioButton value="Married" />           
-                              </View>
-                        </RadioButton.Group>
-                  </View> */}
-                  {/* <View style={styles.drop}>
-                  <Dropdown style={StyleSheet.drop}
-                        label='select Mother from the list'
-                        baseColor="green"
-                        ref={myRef}
-                        itemColor="red"
-                        selectedItemColor="blue"
-                        data={motherval}
-                        animationDuration={0}
-
-                  />
-                  </View> */}
                   <DropDownPicker
                         items={motherval}
                         placeholder="Select Mother From the list"
-                        selectedLabelStyle={{ color: 'green' }}
-                        activeItemStyle={{ backgroundColor: "green" }}
+                        selectedLabelStyle={{ color: '#000000' }}
+                        activeItemStyle={{ backgroundColor: "#38ACEC" }}
                         containerStyle={{ height: 40 }}
                         style={styles.drop}
                         itemStyle={{
@@ -222,36 +196,28 @@ export default function Aboutscreen({ navigation }) {
                         dropDownStyle={{ backgroundColor: '#fafafa' }}
                   />
 
-                  <TextInput style={styles.inputda}
-                        label="MotherName"
-                        mode="outlined"
-                        value={MotherName}
-                        onChangeText={text => setMotherName(text)}
-                  />
-
                   <View >
-                        <RadioButton.Group onValueChange={value => setValue(value)} value={value}>
+                        <RadioButton.Group onValueChange={Gendervalue => setGendervalue(Gendervalue)} value={Gendervalue}>
                               <View style={styles.radio} >
-                                    <Text style={styles.radiotext}>Male</Text>
                                     <RadioButton value="Male" />
-                                    <Text style={styles.radiotext}>Female</Text>
+                                    <Text style={styles.radiotext}>Male</Text>
                                     <RadioButton value="Female" />
-                                    <Text style={styles.radiotext}>Others</Text>
+                                    <Text style={styles.radiotext}>Female</Text>
                                     <RadioButton value="Others" />
+                                    <Text style={styles.radiotext}>Others</Text>
+
                               </View>
                         </RadioButton.Group>
                   </View>
-
+                  
+                  <TextInput style={styles.inputda}
+                        label="Wife Name"
+                        mode="outlined"
+                        value={WifeName}
+                        onChangeText={text => setWifeName(text)}
+                  />
                   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                        {/* <Button
-                              style={styles.submitButtonr}
-                              mode="contained"
-                              onPress={() => getfatherdata()}
-                              title="Submit">
-                              fetch
-                        </Button> */}
-
-                        <Button
+                        <Button disabled={!isEnabled}
                               style={styles.submitButtonr}
                               mode="contained"
                               onPress={() => submitData()}
