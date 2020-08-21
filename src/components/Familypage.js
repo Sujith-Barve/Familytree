@@ -1,5 +1,5 @@
 ﻿﻿import React, { Component, useState, useEffect } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, ScrollView, value, BackHandler } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler,ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -18,7 +18,7 @@ export default function Aboutscreen({ navigation }) {
       const [isLoading, setIsLoading] = useState(false);
       const [fatherval, setfatherval] = useState([]);
       const [motherval, setmotherval] = useState([]);
-      const[martialvalue,setmartialvalue]=useState([]);
+      const[martialvalue,setmartialvalue]=useState('Bachelor');
       const isEnabled = FatherName.length > 0
             && MotherName.length > 0 && username.length > 0;
       const [motherVisible, setMotherVisiblity] = useState(true);
@@ -138,13 +138,16 @@ export default function Aboutscreen({ navigation }) {
                         onChangeText={text => setusername(text)}
 
                   />
-                  <View >
-                        <RadioButton.Group onValueChange={martialvalue => setmartialvalue(martialvalue)} value={martialvalue}>
+                 
+                 <View >
+                        <RadioButton.Group onValueChange={Gendervalue => setGendervalue(Gendervalue)} value={Gendervalue}>
                               <View style={styles.radio} >
-                                    <RadioButton value="Bachelor" />
-                                    <Text style={styles.radiotext}>Bachelor</Text>
-                                    <RadioButton value="Married" />
-                                    <Text style={styles.radiotext}>Married</Text>
+                                    <RadioButton value="Male" />
+                                    <Text style={styles.radiotext}>Male</Text>
+                                    <RadioButton value="Female" />
+                                    <Text style={styles.radiotext}>Female</Text>
+                                    <RadioButton value="Others" />
+                                    <Text style={styles.radiotext}>Others</Text>
 
                               </View>
                         </RadioButton.Group>
@@ -174,8 +177,6 @@ export default function Aboutscreen({ navigation }) {
                         dropDownStyle={{ backgroundColor: '#fafafa' }}
 
                   />
-
-
                   <TextInput style={styles.inputda}
                         label="MotherName"
                         mode="outlined"
@@ -195,27 +196,27 @@ export default function Aboutscreen({ navigation }) {
                         showArrow={true}
                         dropDownStyle={{ backgroundColor: '#fafafa' }}
                   />
+                       
 
                   <View >
-                        <RadioButton.Group onValueChange={Gendervalue => setGendervalue(Gendervalue)} value={Gendervalue}>
+                        <RadioButton.Group onValueChange={martialvalue => setmartialvalue(martialvalue)} value={martialvalue}>
                               <View style={styles.radio} >
-                                    <RadioButton value="Male" />
-                                    <Text style={styles.radiotext}>Male</Text>
-                                    <RadioButton value="Female" />
-                                    <Text style={styles.radiotext}>Female</Text>
-                                    <RadioButton value="Others" />
-                                    <Text style={styles.radiotext}>Others</Text>
+                                    <RadioButton value="Bachelor" />
+                                    <Text style={styles.radiotext}>Bachelor</Text>
+                                    <RadioButton value="Married" />
+                                    <Text style={styles.radiotext}>Married</Text>
 
                               </View>
+
                         </RadioButton.Group>
+                        { martialvalue=="Married" ?  <TextInput style={styles.inputda}
+                  label="Wife Name"
+                  mode="outlined"
+                  value={WifeName}
+                  onChangeText={WifeName => this.setState(WifeName)}
+            /> : <Text></Text> }
                   </View>
                   
-                  <TextInput style={styles.inputda}
-                        label="Wife Name"
-                        mode="outlined"
-                        value={WifeName}
-                        onChangeText={text => setWifeName(text)}
-                  />
                   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                         <Button disabled={!isEnabled}
                               style={styles.submitButtonr}
