@@ -11,14 +11,16 @@ var submitpercentage = 1;
 export default function Aboutscreen({ navigation }) {
       // var usernameval = navigation.getParam('username');
       const [username, setusername] = useState('');
-      const [FatherName, setFatherName] = useState('');
+      const [FatherName, setFatherName] = useState('');     
       const [MotherName, setMotherName] = useState('');
       const [WifeName, setWifeName] = useState('');
+      const [ChildrenName,setChildrenName] = useState('');
       const [Gendervalue, setGendervalue] = useState();
       const [isLoading, setIsLoading] = useState(false);
       const [fatherval, setfatherval] = useState([]);
       const [motherval, setmotherval] = useState([]);
       const[martialvalue,setmartialvalue]=useState('Bachelor');
+      const[Havingchildren,setHavingchildren]=useState("Yes");
       const isEnabled = FatherName.length > 0
             && MotherName.length > 0 && username.length > 0;
       const [motherVisible, setMotherVisiblity] = useState(true);
@@ -129,8 +131,23 @@ export default function Aboutscreen({ navigation }) {
                   })
 
       }
+      const TextInputshow = () =>
+      {
+            if(ChildrenName>0)
+            {
+                  for(var i=0;i<ChildrenName;i++)
+                  {
+                        <TextInput style={styles.inputda}
+                  label="Childeren Name"
+                  mode="outlined"   
+                  value={ChildrenName}
+                  onChangeText={ChildrenName => this.setState(ChildrenName)}
+            /> 
+                  }
+            } 
+      }
       return (
-            <View style={styles.root}>
+            <ScrollView style={styles.root}>
                   <TextInput style={styles.inputda}
                         label="Name"
                         mode="outlined"
@@ -216,6 +233,27 @@ export default function Aboutscreen({ navigation }) {
                   onChangeText={WifeName => this.setState(WifeName)}
             /> : <Text></Text> }
                   </View>
+                  <View>
+                        <Text>Having Children</Text>
+                  <RadioButton.Group onValueChange={Havingchildren => setHavingchildren(Havingchildren)} value={Havingchildren}>
+                              <View style={styles.radio} >
+                                    <RadioButton value="Yes" />
+                                    <Text style={styles.radiotext}>Yes</Text>
+                                    <RadioButton value="No" />
+                                    <Text style={styles.radiotext}>No</Text>
+
+                              </View>
+
+                        </RadioButton.Group>  
+                        { Havingchildren=="Yes" ?  <TextInput style={styles.inputda}
+                  label="Childeren Name"
+                  mode="outlined"   
+                  value={ChildrenName}
+                  onChangeText={ChildrenName => this.setState(ChildrenName)}  onValueChange={TextInputshow}
+            /> : <Text></Text> } 
+
+                  </View>
+
                   
                   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                         <Button disabled={!isEnabled}
@@ -226,7 +264,7 @@ export default function Aboutscreen({ navigation }) {
                               Submit
                         </Button>
                   </View>
-            </View>
+            </ScrollView>
       );
 }
 
