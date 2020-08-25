@@ -1,26 +1,29 @@
 ﻿﻿import React, { Component, useState, useEffect } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler,ScrollView } from 'react-native';
+import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Feather';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { sub } from 'react-native-reanimated';
 myRef = React.createRef();
 var originalFather = [];
-var submitpercentage = 1;
+var originalMother = [];
+// var submitpercentage = 1;
 
 export default function Aboutscreen({ navigation }) {
       // var usernameval = navigation.getParam('username');
       const [username, setusername] = useState('');
-      const [FatherName, setFatherName] = useState('');     
+      const [FatherName, setFatherName] = useState('');
       const [MotherName, setMotherName] = useState('');
       const [WifeName, setWifeName] = useState('');
-      const [ChildrenName,setChildrenName] = useState('');
+      const [ChildrenName, setChildrenName] = useState('');
       const [Gendervalue, setGendervalue] = useState();
       const [isLoading, setIsLoading] = useState(false);
       const [fatherval, setfatherval] = useState([]);
       const [motherval, setmotherval] = useState([]);
-      const[martialvalue,setmartialvalue]=useState('Bachelor');
-      const[Havingchildren,setHavingchildren]=useState("Yes");
+      const [martialvalue, setmartialvalue] = useState('Bachelor');
+      const [Havingchildren, setHavingchildren] = useState("Yes");
+      const [ChildernNo, setChildernNo] = useState(0);
+      const[childnametext,setchildnametext]=useState([])
       const isEnabled = FatherName.length > 0
             && MotherName.length > 0 && username.length > 0;
       const [motherVisible, setMotherVisiblity] = useState(true);
@@ -58,11 +61,13 @@ export default function Aboutscreen({ navigation }) {
                         const fatherArray = originalFather.map(element => {
                               return {
                                     ...element,
-                                    label: element.Name, value: element._id,
+                                          label: element.Name, value: element._id,
 
                               };
                         });
-                        setfatherval(...fatherval, fatherArray)
+                        if (fatherval.length != 0)
+                              setfatherval(...fatherval, fatherArray)
+                        else setfatherval(fatherArray)
                         console.log("fathername is" + JSON.stringify(originalFather))
                         setIsLoading(false);
 
@@ -87,8 +92,9 @@ export default function Aboutscreen({ navigation }) {
 
                               };
                         });
-
-                        setmotherval(...motherval, motherArray)
+                        if (motherval.length != 0)
+                              setmotherval(...motherval, motherArray)
+                        else setmotherval(motherArray)
                         console.log("MotherName is" + JSON.stringify(originalMother))
                         setIsLoading(false);
 
@@ -129,22 +135,23 @@ export default function Aboutscreen({ navigation }) {
                   .catch(err => {
                         Alert.alert("someting went wrong either user exists or unable to connect to server");
                   })
-
       }
-      const TextInputshow = () =>
-      {
-            if(ChildrenName>0)
-            {
-                  for(var i=0;i<ChildrenName;i++)
-                  {
-                        <TextInput style={styles.inputda}
-                  label="Childeren Name"
-                  mode="outlined"   
-                  value={ChildrenName}
-                  onChangeText={ChildrenName => this.setState(ChildrenName)}
-            /> 
-                  }
-            } 
+
+      var textdata = [];
+
+      for (let i = 0; i < ChildernNo; i++) {
+            console.log("Number ============== " + i)
+            textdata.push(
+                  <View>
+                        <TextInput
+                              style={styles.inputda}
+                              label="Name"
+                              mode="outlined"
+                              value={childnametext}
+                              onChangeText={text => setchildnametext(text)}
+                        />
+                  </View>
+            )
       }
       return (
             <ScrollView style={styles.root}>
@@ -155,8 +162,8 @@ export default function Aboutscreen({ navigation }) {
                         onChangeText={text => setusername(text)}
 
                   />
-                 
-                 <View >
+
+                  <View >
                         <RadioButton.Group onValueChange={Gendervalue => setGendervalue(Gendervalue)} value={Gendervalue}>
                               <View style={styles.radio} >
                                     <RadioButton value="Male" />
@@ -213,7 +220,7 @@ export default function Aboutscreen({ navigation }) {
                         showArrow={true}
                         dropDownStyle={{ backgroundColor: '#fafafa' }}
                   />
-                       
+
 
                   <View >
                         <RadioButton.Group onValueChange={martialvalue => setmartialvalue(martialvalue)} value={martialvalue}>
@@ -226,43 +233,48 @@ export default function Aboutscreen({ navigation }) {
                               </View>
 
                         </RadioButton.Group>
-                        { martialvalue=="Married" ?  <TextInput style={styles.inputda}
-                  label="Wife Name"
-                  mode="outlined"
-                  value={WifeName}
-                  onChangeText={WifeName => this.setState(WifeName)}
-            /> : <Text></Text> }
+                        {martialvalue == "Married" ? <View>
+                              <TextInput style={styles.inputda}
+                                    label="Wife Name"
+                                    mode="outlined"
+                                    value={WifeName}
+                                    onChangeText={WifeName => setWifeName(WifeName)}
+                              />
+                              <Text>Having Children</Text>
+                              <RadioButton.Group onValueChange={Havingchildren => setHavingchildren(Havingchildren)} value={Havingchildren}>
+                                    <View style={styles.radio} >
+                                          <RadioButton value="Yes" />
+                                          <Text style={styles.radiotext}>Yes</Text>
+                                          <RadioButton value="No" />
+                                          <Text style={styles.radiotext}>No</Text>
+                                    </View>
+                              </RadioButton.Group>
+                              {Havingchildren == "Yes" ?
+
+                                    <TextInput
+                                          style={styles.inputda}
+                                          label="Number Of Children"
+                                          mode="outlined"
+                                          value={ChildernNo}
+                                          onChangeText={ChildernNo => setChildernNo(ChildernNo)}
+                                          keyboardType={'numeric'}
+                                    />
+
+                                    : null}
+                              {textdata}
+                        </View>
+                              : null}
                   </View>
-                  <View>
-                        <Text>Having Children</Text>
-                  <RadioButton.Group onValueChange={Havingchildren => setHavingchildren(Havingchildren)} value={Havingchildren}>
-                              <View style={styles.radio} >
-                                    <RadioButton value="Yes" />
-                                    <Text style={styles.radiotext}>Yes</Text>
-                                    <RadioButton value="No" />
-                                    <Text style={styles.radiotext}>No</Text>
 
-                              </View>
-
-                        </RadioButton.Group>  
-                        { Havingchildren=="Yes" ?  <TextInput style={styles.inputda}
-                  label="Childeren Name"
-                  mode="outlined"   
-                  value={ChildrenName}
-                  onChangeText={ChildrenName => this.setState(ChildrenName)}  onValueChange={TextInputshow}
-            /> : <Text></Text> } 
-
-                  </View>
-
-                  
-                  <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+                  <View
+                        style={{ flex: 1, justifyContent: 'flex-end' }}>
                         <Button disabled={!isEnabled}
                               style={styles.submitButtonr}
                               mode="contained"
                               onPress={() => submitData()}
                               title="Submit">
                               Submit
-                        </Button>
+                              </Button>
                   </View>
             </ScrollView>
       );
@@ -309,6 +321,13 @@ const styles = StyleSheet.create({
 
 
 
+      },
+      numericdata: {
+            textAlign: 'center',
+            height: 40,
+            borderRadius: 10,
+            borderWidth: 2,
+            marginBottom: 10
       }
 
 });
