@@ -34,55 +34,15 @@ export default class Aboutscreen extends React.Component {
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
                   motherdropvalue: 'None',
+                  enabletextInput:'TextInputv',
+                  enabletextInp : 'TextInputv',
             };
       }
       //  isEnabled = fatherlength > 0
       //       && motherlength > 0 && username.length > 0;
       // const [motherVisible, setMotherVisiblity] = useState(true);
 
-      ShowHideTextComponentViewFather = () => {
-            var fatherdatalen = this.state.FatherName.length;
-            console.log(fatherdatalen)
-            // this.pickers
-            if (fatherdatalen >= 1) {
-                  this.setState({ status: true })
-            }
-            else {
-                  this.setState({ status: false })
-            }
-      }
-
-      ShowHideTextComponentFather = () => {
-            console.log("Entered Show hide Text")
-            if (this.refs['pickers'].value() == 'undefined') {
-                  this.setState({ status: true })
-            }
-            else {
-                  this.setState({ status: false })
-            }
-      }
-
-
-
-
-      ShowHideTextComponentViewMother = () => {
-            var motherdatalen = this.state.MotherName.length;
-            if (motherdatalen >= 1) {
-                  this.setState({ hideshowstatus: true })
-            }
-            else {
-                  this.setState({ hideshowstatus: false })
-            }
-      }
-      ShowHideTextComponentMother = () => {
-            if (this.refs['pickers'].value() == 'undefined') {
-                  this.setState({ hideshowstatus: true })
-            }
-            else {
-                  this.setState({ hideshowstatus: false })
-            }
-
-      }
+    
       fatherArray = [];
       motherArray = [];
       getfatherdata = () => {
@@ -257,11 +217,19 @@ export default class Aboutscreen extends React.Component {
 
                               </RadioButton.Group>
                         </View>
-                        {
-                              // Pass any View or Component inside the curly bracket.
-                              // Here the ? Question Mark represent the ternary operator.
+                        <View style={styles.radio}>
+                              <RadioButton.Group
+                                    onValueChange={enabletextInp => this.setState({ enabletextInp })}
+                                    value={this.state.enabletextInp}
+                              >
+                                    <RadioButton value="TextInputv" />
+                                    <Text style={styles.radiotext}>TextInput</Text>
+                                    <RadioButton value="Dropdownv" />
+                                    <Text style={styles.radiotext}>Dropdown</Text>
 
-                              this.state.status ? <TextInput style={styles.inputda}
+                              </RadioButton.Group>
+                              </View>
+                        <TextInput style={styles.inputda}
                                     label="FatherName"
                                     mode="outlined"
                                     value={this.state.FatherName}
@@ -269,25 +237,33 @@ export default class Aboutscreen extends React.Component {
                                     onEndEditing={this.ShowHideTextComponentViewFather}
                               // fatherlength={FatherName.length>0}
 
-                              /> : <Dropdown 
+                              /> 
+                            
+                               <Dropdown  style={styles.drop}
                                     label='Select Your Father'
                                     data={this.state.fatherval}
                                     selectedItemColor="coral"
                                     ref='pickers'
                                     animationDuration='350'
+                                    dropdownMargins={'10'}
                                     onChangeText={text => {
                                           this.ShowHideTextComponentFather()
                                     }
                                     }
                                     defaultValue={this.state.fatherdropvalue}
                                     />
-                        }
-                        {
-                              // Pass any View or Component inside the curly bracket.
-                              // Here the ? Question Mark represent the ternary operator.
+                               <View style={styles.radio}>
+                              <RadioButton.Group
+                                    onValueChange={enabletextInput => this.setState({ enabletextInput })}
+                                    value={this.state.enabletextInput}
+                              >
+                                    <RadioButton value="TextInputv" />
+                                    <Text style={styles.radiotext}>TextInput</Text>
+                                    <RadioButton value="Dropdownv" />
+                                    <Text style={styles.radiotext}>Dropdown</Text>
 
-                              this.state.hideshowstatus ?
-
+                              </RadioButton.Group>
+                              </View>
                                     <TextInput style={styles.inputda}
                                           label="MotherName"
                                           mode="outlined"
@@ -296,7 +272,6 @@ export default class Aboutscreen extends React.Component {
                                           onChangeText={MotherName => this.setState({ MotherName })}
                                           onEndEditing={this.ShowHideTextComponentViewMother}
                                     />
-                                    :
                                     <Dropdown
                                           label='Select Your Mother'
                                           pickerStyle={styles.dropstyle}
@@ -308,7 +283,6 @@ export default class Aboutscreen extends React.Component {
                                           }
                                           defaultValue={this.state.motherdropvalue}
                                     />
-                        }
 
                         <View style={styles.radio}>
                               <RadioButton.Group
@@ -407,11 +381,11 @@ const styles = StyleSheet.create({
       },
       drop:
       {
-            borderTopLeftRadius: 10,
-            borderTopRightRadius: 10,
-            borderBottomLeftRadius: 10,
-            borderBottomRightRadius: 10,
-            padding: 50,
+            // borderTopLeftRadius: 10,
+            // borderTopRightRadius: 10,
+            // borderBottomLeftRadius: 10,
+            // borderBottomRightRadius: 10,
+            // padding: 50,
 
 
       },
