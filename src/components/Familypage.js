@@ -30,24 +30,59 @@ export default class Aboutscreen extends React.Component {
                   Gendervalue: 'Male',
                   martialvalue: 'Bachelor',
                   Havingchildren: 'Yes',
-                  status:true,
+                  status: true,
+                  hideshowstatus: true,
+                  fatherdropvalue: 'None',
+                  motherdropvalue: 'None',
             };
       }
       //  isEnabled = fatherlength > 0
       //       && motherlength > 0 && username.length > 0;
       // const [motherVisible, setMotherVisiblity] = useState(true);
-      ShowHideTextComponentView = () =>{
 
-            if(this.state.status == true)
-            {
-              this.setState({status: false})
+      ShowHideTextComponentViewFather = () => {
+            var fatherdatalen = this.state.FatherName.length;
+            console.log(fatherdatalen)
+            // this.pickers
+            if (fatherdatalen >= 1) {
+                  this.setState({ status: true })
             }
-            else
-            {
-              this.setState({status: true})
+            else {
+                  this.setState({ status: false })
             }
-          }
-          
+      }
+
+      ShowHideTextComponentFather = () => {
+            console.log("Entered Show hide Text")
+            if (this.refs['pickers'].value() == 'undefined') {
+                  this.setState({ status: true })
+            }
+            else {
+                  this.setState({ status: false })
+            }
+      }
+
+
+
+
+      ShowHideTextComponentViewMother = () => {
+            var motherdatalen = this.state.MotherName.length;
+            if (motherdatalen >= 1) {
+                  this.setState({ hideshowstatus: true })
+            }
+            else {
+                  this.setState({ hideshowstatus: false })
+            }
+      }
+      ShowHideTextComponentMother = () => {
+            if (this.refs['pickers'].value() == 'undefined') {
+                  this.setState({ hideshowstatus: true })
+            }
+            else {
+                  this.setState({ hideshowstatus: false })
+            }
+
+      }
       fatherArray = [];
       motherArray = [];
       getfatherdata = () => {
@@ -59,21 +94,21 @@ export default class Aboutscreen extends React.Component {
                         console.log("fathername is" + JSON.stringify(originalFather))
                         const fatherArray = originalFather.map(element => {
                               return {
-                                    label: element.Name, 
+                                    label: element.Name,
                                     value: element._id,
                               };
                         });
                         console.log(JSON.stringify(fatherArray))
                         this.setState({
-                              fatherval: [...fatherArray]
+                              fatherval: [{value:'None',label:'None'},...fatherArray]
                         }, () => {
-                              console.log("fatherval setstate failed")
+                              console.log("fatherval setstate failed" + JSON.stringify(this.state.fatherval));
                         });
-                  
+
                         // else {
                         //       this.setState.fatherval(fatherArray)
                         // }
-                        
+
                         // this.setState.IsLoading(false);
 
                   })
@@ -94,7 +129,7 @@ export default class Aboutscreen extends React.Component {
                         console.log("Resp data is" + originalMother);
                         const motherArray = originalMother.map(element => {
                               return {
-                                    label: element.Name, 
+                                    label: element.Name,
                                     value: element._id,
                               };
                         });
@@ -105,7 +140,7 @@ export default class Aboutscreen extends React.Component {
                         }, () => {
                               console.log("fatherval setstate failed")
                         });
-                  
+
                         console.log("motherval is" + JSON.stringify(this.state.motherval))
                         // else this.setState.motherval(motherArray)
                         console.log("MotherName is" + JSON.stringify(originalMother))
@@ -147,8 +182,9 @@ export default class Aboutscreen extends React.Component {
       submitData = () => {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             // let selectedFatherId = obj._id.toString()
-            // console.log(selectedFatherId)    
-            console.log("=============== " + this.refs['picker'].value(),"Fatgerva; is "+ this.refs['pickers'].value)
+            // console.log(selectedFatherId) 
+            console.log("Not entered the None")
+            console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
 
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
@@ -221,42 +257,58 @@ export default class Aboutscreen extends React.Component {
 
                               </RadioButton.Group>
                         </View>
-                        <TextInput style={styles.inputda}
-                              label="FatherName"
-                              mode="outlined"
-                              value={this.state.FatherName}
-                              onChangeText={FatherName => this.setState({ FatherName })}
-                              onFocus={this.ShowHideTextComponentView}
-                        // fatherlength={FatherName.length>0}
+                        {
+                              // Pass any View or Component inside the curly bracket.
+                              // Here the ? Question Mark represent the ternary operator.
 
-                        />
-                                {
-          // Pass any View or Component inside the curly bracket.
-          // Here the ? Question Mark represent the ternary operator.
+                              this.state.status ? <TextInput style={styles.inputda}
+                                    label="FatherName"
+                                    mode="outlined"
+                                    value={this.state.FatherName}
+                                    onChangeText={FatherName => this.setState({ FatherName })}
+                                    onEndEditing={this.ShowHideTextComponentViewFather}
+                              // fatherlength={FatherName.length>0}
 
-        this.state.status ? <Dropdown
-        label='Select Your Father'
-        data={this.state.fatherval}
-        selectedItemColor="coral"
-        ref='pickers'
-        /> : null
-      }
+                              /> : <Dropdown 
+                                    label='Select Your Father'
+                                    data={this.state.fatherval}
+                                    selectedItemColor="coral"
+                                    ref='pickers'
+                                    animationDuration='350'
+                                    onChangeText={text => {
+                                          this.ShowHideTextComponentFather()
+                                    }
+                                    }
+                                    defaultValue={this.state.fatherdropvalue}
+                                    />
+                        }
+                        {
+                              // Pass any View or Component inside the curly bracket.
+                              // Here the ? Question Mark represent the ternary operator.
 
-                       
-                        <Dropdown
-                              label='Select Your Mother'
-                              data={this.state.motherval}
-                              ref='picker'
-                              />
+                              this.state.hideshowstatus ?
 
-
-                        <TextInput style={styles.inputda}
-                              label="MotherName"
-                              mode="outlined"
-                              value={this.state.MotherName}
-                              //      motherlength={value.length>0}
-                              onChangeText={MotherName => this.setState({ MotherName })}
-                        />
+                                    <TextInput style={styles.inputda}
+                                          label="MotherName"
+                                          mode="outlined"
+                                          value={this.state.MotherName}
+                                          //      motherlength={value.length>0}
+                                          onChangeText={MotherName => this.setState({ MotherName })}
+                                          onEndEditing={this.ShowHideTextComponentViewMother}
+                                    />
+                                    :
+                                    <Dropdown
+                                          label='Select Your Mother'
+                                          pickerStyle={styles.dropstyle}
+                                          data={this.state.motherval}
+                                          ref='picker'
+                                          onChangeText={text => {
+                                                this.ShowHideTextComponentViewMother()
+                                          }
+                                          }
+                                          defaultValue={this.state.motherdropvalue}
+                                    />
+                        }
 
                         <View style={styles.radio}>
                               <RadioButton.Group
@@ -348,18 +400,18 @@ const styles = StyleSheet.create({
             fontSize: 14,
             padding: 5,
       },
+      dropstyle:
+      {
+
+
+      },
       drop:
       {
-            backgroundColor: '#fafafa',
             borderTopLeftRadius: 10,
             borderTopRightRadius: 10,
             borderBottomLeftRadius: 10,
             borderBottomRightRadius: 10,
-            marginLeft: 8,
-            marginRight: 8,
-            marginTop: 5,
             padding: 50,
-
 
 
       },
