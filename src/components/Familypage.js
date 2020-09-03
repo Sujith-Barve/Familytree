@@ -1,16 +1,18 @@
 ﻿﻿import React, { Component, useState, useEffect, createRef } from 'react';
 import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
+import SwitchSelector from "react-native-switch-selector";
 // import RadioForm,{RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/Feather';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Dropdown } from 'react-native-material-dropdown';
-
 import withUnmounted from '@ishawnwang/withunmounted'
 import { sub } from 'react-native-reanimated';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 var originalFather = [];
 var originalMother = [];
-var i;
+var i,manualentry,Fat_name,fat_ID;
+
 // var submitpercentage = 1;
 export default class Aboutscreen extends React.Component {
       constructor(props) {
@@ -34,17 +36,29 @@ export default class Aboutscreen extends React.Component {
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
                   motherdropvalue: 'None',
-                  enabletextInput:'TextInputv',
-                  enabletextInp : 'TextInputv',
+                  switchValue: 0,
+                  switchValuemother: 0,
+                  fathermanualentry :true,
+                  Mothermanualentry :true,
+                  // enabletextInput:'TextInputv',
+                  // enabletextInp : 'TextInputv',
+
             };
       }
       //  isEnabled = fatherlength > 0
       //       && motherlength > 0 && username.length > 0;
       // const [motherVisible, setMotherVisiblity] = useState(true);
 
-    
+
       fatherArray = [];
       motherArray = [];
+      toggleSwitch = (value) => {
+            this.setState({ switchValue: value })
+
+      }
+      toggleSwitches = (value) => {
+            this.setState({ switchValuemother: value })
+      }
       getfatherdata = () => {
             // this.setState.IsLoading(true);
             return fetch('http://192.168.43.131:3000/getfatherdata')
@@ -60,7 +74,7 @@ export default class Aboutscreen extends React.Component {
                         });
                         console.log(JSON.stringify(fatherArray))
                         this.setState({
-                              fatherval: [{value:'None',label:'None'},...fatherArray]
+                              fatherval: [...fatherArray]
                         }, () => {
                               console.log("fatherval setstate failed" + JSON.stringify(this.state.fatherval));
                         });
@@ -143,9 +157,20 @@ export default class Aboutscreen extends React.Component {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             // let selectedFatherId = obj._id.toString()
             // console.log(selectedFatherId) 
+            if(this.state.switchValue==0)
+            {
+                  this.setState({fathermanualentry:true});
+                  Fat_name=this.state.FatherName;
+                 
+            }
+            else
+            {
+                  this.setState({fathermanualentry:false});
+                  fat_ID=this.this.refs['pickers'].value()
+
+            }
             console.log("Not entered the None")
             console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
-
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
                   headers: {
@@ -203,6 +228,7 @@ export default class Aboutscreen extends React.Component {
                               onChangeText={username => this.setState({ username })}
                         // userlength={value.length>0}
                         />
+
                         <View style={styles.radio}>
                               <RadioButton.Group
                                     onValueChange={Gendervalue => this.setState({ Gendervalue })}
@@ -217,72 +243,81 @@ export default class Aboutscreen extends React.Component {
 
                               </RadioButton.Group>
                         </View>
-                        <View style={styles.radio}>
-                              <RadioButton.Group
-                                    onValueChange={enabletextInp => this.setState({ enabletextInp })}
-                                    value={this.state.enabletextInp}
-                              >
-                                    <RadioButton value="TextInputv" />
-                                    <Text style={styles.radiotext}>TextInput</Text>
-                                    <RadioButton value="Dropdownv" />
-                                    <Text style={styles.radiotext}>Dropdown</Text>
+                        <View style={styles.fathers}>
+                              <Text style={{ fontSize: 15, padding: 10, fontFamily: 'sans-serif-light' }}>Father Name :</Text>
+                              <SwitchSelector style={styles.Switc}
+                                    options={[
+                                          { label: "Manual Entry", value: "0" },
+                                          { label: "Select", value: "1" },
+                                    ]}
+                                    activeColor={"Black"}
+                                    textColor={"Black"}
+                                    selectedColor={"white"}
+                                    buttonColor={"#607D8B"}
+                                    borderColor={"#263238"}
+                                    initial={0}
+                                    value={this.state.switchValue}
+                                    onPress={value => this.toggleSwitch(value)}
+                              />
+                              {
+                                    (this.state.switchValue == "0") ?
+                                          <TextInput style={{marginLeft:15,marginRight:10}}
+                                                label="FatherName"
+                                                mode="outlined"
+                                                value={this.state.FatherName}
+                                                onChangeText={FatherName => this.setState({ FatherName })}
+                                                onEndEditing={this.ShowHideTextComponentViewFather} />
+                                          :
+                                          <Dropdown style={styles.drop}
+                                                label='Select Your Father'
+                                                data={this.state.fatherval}
+                                                selectedItemColor="#78909C"
+                                                ref='pickers'
+                                                defaultValue={this.state.fatherdropvalue}
+                                          />
+                              }
+                        </View>
 
-                              </RadioButton.Group>
-                              </View>
-                        <TextInput style={styles.inputda}
-                                    label="FatherName"
-                                    mode="outlined"
-                                    value={this.state.FatherName}
-                                    onChangeText={FatherName => this.setState({ FatherName })}
-                                    onEndEditing={this.ShowHideTextComponentViewFather}
-                              // fatherlength={FatherName.length>0}
-
-                              /> 
-                            
-                               <Dropdown  style={styles.drop}
-                                    label='Select Your Father'
-                                    data={this.state.fatherval}
-                                    selectedItemColor="coral"
-                                    ref='pickers'
-                                    animationDuration='350'
-                                    dropdownMargins={'10'}
-                                    onChangeText={text => {
-                                          this.ShowHideTextComponentFather()
-                                    }
-                                    }
-                                    defaultValue={this.state.fatherdropvalue}
-                                    />
-                               <View style={styles.radio}>
-                              <RadioButton.Group
-                                    onValueChange={enabletextInput => this.setState({ enabletextInput })}
-                                    value={this.state.enabletextInput}
-                              >
-                                    <RadioButton value="TextInputv" />
-                                    <Text style={styles.radiotext}>TextInput</Text>
-                                    <RadioButton value="Dropdownv" />
-                                    <Text style={styles.radiotext}>Dropdown</Text>
-
-                              </RadioButton.Group>
-                              </View>
-                                    <TextInput style={styles.inputda}
-                                          label="MotherName"
-                                          mode="outlined"
-                                          value={this.state.MotherName}
-                                          //      motherlength={value.length>0}
-                                          onChangeText={MotherName => this.setState({ MotherName })}
-                                          onEndEditing={this.ShowHideTextComponentViewMother}
-                                    />
-                                    <Dropdown
-                                          label='Select Your Mother'
-                                          pickerStyle={styles.dropstyle}
-                                          data={this.state.motherval}
-                                          ref='picker'
-                                          onChangeText={text => {
-                                                this.ShowHideTextComponentViewMother()
-                                          }
-                                          }
-                                          defaultValue={this.state.motherdropvalue}
-                                    />
+                        <View style={styles.Mothers}>
+                              <Text style={{ fontSize: 15, padding: 10, fontFamily: 'sans-serif-light' }}>Mother Name :</Text>
+                              <SwitchSelector style={styles.Switc}
+                                    options={[
+                                          { label: "Manual Entry", value: "0" },
+                                          { label: "Select", value: "1" },
+                                    ]}
+                                    textColor={"Black"}
+                                    selectedColor={"white"}
+                                    buttonColor={"#607D8B"}
+                                    borderColor={"#263238"}
+                                    initial={0}
+                                    value={this.state.switchValuemother}
+                                    onPress={value => this.toggleSwitches(value)}
+                              />
+                              {
+                                    (this.state.switchValuemother == "0") ?
+                                          <TextInput style={{marginLeft:15,marginRight:10}}
+                                                label="MotherName"
+                                                mode="outlined"
+                                                value={this.state.MotherName}
+                                                //      motherlength={value.length>0}
+                                                onChangeText={MotherName => this.setState({ MotherName })}
+                                                onEndEditing={this.ShowHideTextComponentViewMother}
+                                          /> 
+                                          :
+                                          <Dropdown
+                                                pickerStyle={styles.dropdowns}
+                                                dropdownMargins={styles.dropdowns}
+                                                label='Select Your Mother'
+                                                data={this.state.motherval}
+                                                ref='picker'
+                                                onChangeText={text => {
+                                                      this.ShowHideTextComponentViewMother()
+                                                }
+                                                }
+                                                defaultValue={this.state.motherdropvalue}
+                                          />
+                              }
+                        </View>
 
                         <View style={styles.radio}>
                               <RadioButton.Group
@@ -348,7 +383,53 @@ const styles = StyleSheet.create({
       {
             flex: 1,
             flexDirection: "column",
+            backgroundColor:"#CFD8DC"
       },
+      fathers:
+      {
+            marginLeft: 10,
+            marginRight: 10,
+            width: "95%",
+            height: 160,
+            borderRadius: 5,
+            backgroundColor: "#B0BEC5"
+
+
+      },
+      dropdowns:
+      {
+            marginVertical:10,
+            marginHorizontal:10,
+            paddingHorizontal: 8,
+      },
+      Switc:
+      {
+            marginLeft:10,
+            marginRight:10,
+            marginBottom:10,
+      },
+      Mothers:
+      {     
+            marginTop:10,
+          marginLeft: 10,
+            marginRight: 10,
+            width: "95%",
+            height: 160,
+            borderRadius: 5,
+            backgroundColor: "#B0BEC5"  
+      },
+      switchdrop:
+      {
+            flex: 1,
+            flexDirection: "row",
+
+
+      },
+      swichstyle:
+      {
+            marginLeft: "53%",
+      },
+
       inputda:
       {
             margin: 5,
