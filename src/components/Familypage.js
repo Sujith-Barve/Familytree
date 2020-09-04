@@ -11,7 +11,7 @@ import { sub } from 'react-native-reanimated';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 var originalFather = [];
 var originalMother = [];
-var i,manualentry,Fat_name,fat_ID;
+var i, manualentry, Fat_name, fat_ID;
 
 // var submitpercentage = 1;
 export default class Aboutscreen extends React.Component {
@@ -38,8 +38,10 @@ export default class Aboutscreen extends React.Component {
                   motherdropvalue: 'None',
                   switchValue: 0,
                   switchValuemother: 0,
-                  fathermanualentry :true,
-                  Mothermanualentry :true,
+                  fathermanualentry: true,
+                  mothermanualentry: true,
+                  ChildName: '',
+                  ChildGendervalue: 'Male',
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
 
@@ -112,7 +114,7 @@ export default class Aboutscreen extends React.Component {
                         this.setState({
                               motherval: [...motherArray]
                         }, () => {
-                              console.log("fatherval setstate failed")
+                              console.log("Motherval setstate failed")
                         });
 
                         console.log("motherval is" + JSON.stringify(this.state.motherval))
@@ -141,8 +143,8 @@ export default class Aboutscreen extends React.Component {
             return true;
       };
       componentDidMount() {
-            this.getfatherdata();
             this.getMotherdata();
+            this.getfatherdata();
             this.backHandler = BackHandler.addEventListener(
                   "hardwareBackPress",
                   this.backAction
@@ -157,20 +159,29 @@ export default class Aboutscreen extends React.Component {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             // let selectedFatherId = obj._id.toString()
             // console.log(selectedFatherId) 
-            if(this.state.switchValue==0)
+            if (this.state.switchValue == 0) {
+                  this.setState({ fathermanualentry: true });
+                  Fat_name = this.state.FatherName;
+
+            }
+            else {
+                  this.setState({ fathermanualentry: false });
+                  fat_ID = this.refs['pickers'].value();
+
+            }
+            if(this.state.switchValuemother==0)
             {
-                  this.setState({fathermanualentry:true});
-                  Fat_name=this.state.FatherName;
-                 
+                  this.setState({mothermanualentry:true})
+                  Mot_Name=this.state.MotherName
             }
             else
             {
-                  this.setState({fathermanualentry:false});
-                  fat_ID=this.this.refs['pickers'].value()
-
+                  this.setState({mothermanualentry:false})
+                  Mot_ID=this.refs['picker'].value();
             }
+
             console.log("Not entered the None")
-            console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
+            // console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
                   headers: {
@@ -178,20 +189,27 @@ export default class Aboutscreen extends React.Component {
                   },
                   body: JSON.stringify({
                         Name: this.state.username,
-                        // FatherName: FatherName,
-                        // MotherName: MotherName,
-                        Gender: this.state.Gendervalue,
+                        ManualEntryFather: this.state.fathermanualentry,
+                        ManualEntryMother : this.state.mothermanualentry,
                         FatherName: this.state.FatherName,
                         MotherName: this.state.MotherName,
+                        Gender: this.state.Gendervalue,
+                        Father_ID: fat_ID,
+                        MarriageStatus : this.state.martialvalue,
+                        WifeName : this.state.WifeName,
+                        ChildName : this.state.ChildName,
+                        ChildGender: this.state.ChildGendervalue
                   })
             }).then(res => res.json())
                   .then(data => {
                         console.log(data);
                         Alert.alert(`Data is saved successfuly`)
                         // navigation.navigate('Home');
-                        this.setState.FatherName('')
-                        this.setState.MotherName('');
-                        this.setState.username('');
+                        this.setState({FatherName:''});
+                        this.setState({MotherName:''});
+                        this.setState({username : ''})
+                        this.setState({Gender : 'Male'})
+                        this.setState({martialvalue : 'Bachelor'})
 
                   })
                   .catch(err => {
@@ -201,47 +219,55 @@ export default class Aboutscreen extends React.Component {
 
 
       dynamictextline = () => {
+            console.log("Entered Dynamic Text line")
 
-            var textdata = [];
-            for (i = 0; i < this.state.ChildernNo; i++) {
-                  console.log("Number ============== " + i)
-                  textdata.push(
-                        <View>
-                              <TextInput
-                                    style={styles.inputda}
-                                    label="Name"
-                                    mode="outlined"
-                                    value={this.state.childnametext}
-                                    onChangeText={text => this.setState.childnametext(text)}
-                              />
-                        </View>
-                  )
-            }
+            // var textdata = [];
+            // for (i = 0; i < this.state.ChildernNo; i++) {
+            //       console.log("Number ============== " + i)
+            //       textdata.push(
+            //             <View>
+            //                   <TextInput
+            //                         style={styles.inputda}
+            //                         label="Name"
+            //                         mode="outlined"
+            //                         value={this.state.childnametext}
+            //                         onChangeText={text => this.setState.childnametext(text)}
+            //                   />
+            //             </View>
+            //       )
+            // }
       }
       render() {
             return (
                   <ScrollView style={styles.root}>
+                        <View style={styles.fathers}>
                         <TextInput style={styles.inputda}
                               label="Name"
+                              borderColor="#455A64"
+                              
+                              selectionColor="#455A64"
                               mode="outlined"
                               value={this.state.username}
                               onChangeText={username => this.setState({ username })}
                         // userlength={value.length>0}
                         />
-
+                              <Text style={{ fontSize: 15, paddingTop: 10,
+                                    paddingLeft:10,
+                                    paddingRight:10, fontFamily: 'sans-serif-light' }}>Select Your Gender :</Text>
                         <View style={styles.radio}>
-                              <RadioButton.Group
+                              <RadioButton.Group 
                                     onValueChange={Gendervalue => this.setState({ Gendervalue })}
                                     value={this.state.Gendervalue}
                               >
-                                    <RadioButton value="Male" />
+                                    <RadioButton  color="#263238" value="Male" />
                                     <Text style={styles.radiotext}>Male</Text>
-                                    <RadioButton value="Female" />
+                                    <RadioButton  color="#263238" value="Female" />
                                     <Text style={styles.radiotext}>Female</Text>
-                                    <RadioButton value="Others" />
+                                    <RadioButton color="#263238" value="Others" />
                                     <Text style={styles.radiotext}>Others</Text>
 
                               </RadioButton.Group>
+                        </View>
                         </View>
                         <View style={styles.fathers}>
                               <Text style={{ fontSize: 15, padding: 10, fontFamily: 'sans-serif-light' }}>Father Name :</Text>
@@ -261,7 +287,7 @@ export default class Aboutscreen extends React.Component {
                               />
                               {
                                     (this.state.switchValue == "0") ?
-                                          <TextInput style={{marginLeft:15,marginRight:10}}
+                                          <TextInput style={{ marginLeft: 15, marginRight: 10 }}
                                                 label="FatherName"
                                                 mode="outlined"
                                                 value={this.state.FatherName}
@@ -295,18 +321,16 @@ export default class Aboutscreen extends React.Component {
                               />
                               {
                                     (this.state.switchValuemother == "0") ?
-                                          <TextInput style={{marginLeft:15,marginRight:10}}
+                                          <TextInput style={{ marginLeft: 15, marginRight: 10 }}
                                                 label="MotherName"
                                                 mode="outlined"
                                                 value={this.state.MotherName}
                                                 //      motherlength={value.length>0}
                                                 onChangeText={MotherName => this.setState({ MotherName })}
-                                                onEndEditing={this.ShowHideTextComponentViewMother}
-                                          /> 
+                                               
+                                          />
                                           :
                                           <Dropdown
-                                                pickerStyle={styles.dropdowns}
-                                                dropdownMargins={styles.dropdowns}
                                                 label='Select Your Mother'
                                                 data={this.state.motherval}
                                                 ref='picker'
@@ -324,9 +348,9 @@ export default class Aboutscreen extends React.Component {
                                     onValueChange={martialvalue => this.setState({ martialvalue })}
                                     value={this.state.martialvalue}
                               >
-                                    <RadioButton value="Bachelor" />
+                                    <RadioButton  color="#263238" value="Bachelor" />
                                     <Text style={styles.radiotext}>Bachelor</Text>
-                                    <RadioButton value="Married" />
+                                    <RadioButton color="#263238" value="Married" />
                                     <Text style={styles.radiotext}>Married</Text>
                               </RadioButton.Group>
                         </View>
@@ -344,22 +368,40 @@ export default class Aboutscreen extends React.Component {
                                                 onValueChange={Havingchildren => this.setState({ Havingchildren })}
                                                 value={this.state.Havingchildren}
                                           >
-                                                <RadioButton value="Yes" />
+                                                <RadioButton  color="#263238" value="Yes" />
                                                 <Text style={styles.radiotext}>Yes</Text>
-                                                <RadioButton value="No" />
+                                                <RadioButton color="#263238" value="No" />
                                                 <Text style={styles.radiotext}>No</Text>
                                           </RadioButton.Group>
                                     </View>
 
                                     {this.state.Havingchildren == "Yes" ?
-                                          <TextInput
-                                                style={styles.inputda}
-                                                label="Number Of Children"
-                                                mode="outlined"
-                                                value={this.state.ChildernNo}
-                                                onChangeText={ChildernNo => this.setState({ ChildernNo })}
-                                                keyboardType={'numeric'} onFocus={this.dynamictextline()}
-                                          /> : null}
+                                          <View style={styles.fathers}>
+                                                <TextInput style={styles.inputda}
+                                                      label="Child Name"
+                                                      mode="outlined"
+                                                      value={this.state.ChildName}
+                                                      onChangeText={ChildName => this.setState({ ChildName })}
+                                                />
+                                                <Text style={{ fontSize: 15, padding: 10,
+                                                       fontFamily: 'sans-serif-light' }}>Select Child Gender :</Text>
+
+                                                <View style={styles.radio}>
+                                                      <RadioButton.Group
+                                                            onValueChange={ChildGendervalue => this.setState({ ChildGendervalue })}
+                                                            value={this.state.ChildGendervalue}
+                                                      >
+                                                            <RadioButton color="#263238" value="Male" />
+                                                            <Text style={styles.radiotext}>Male</Text>
+                                                            <RadioButton color="#263238" value="Female" />
+                                                            <Text style={styles.radiotext}>Female</Text>
+                                                            <RadioButton  color="#263238" value="Others" />
+                                                            <Text style={styles.radiotext}>Others</Text>
+                                                      </RadioButton.Group>
+                                                </View>
+
+                                          </View>
+                                          : null}
                               </View>
                               : null}
                         <View
@@ -383,40 +425,41 @@ const styles = StyleSheet.create({
       {
             flex: 1,
             flexDirection: "column",
-            backgroundColor:"#CFD8DC"
+            
       },
       fathers:
       {
             marginLeft: 10,
-            marginRight: 10,
+            marginTop :10,
+            marginRight: 20,
             width: "95%",
             height: 160,
             borderRadius: 5,
-            backgroundColor: "#B0BEC5"
+            backgroundColor: "#CFD8DC"
 
 
       },
       dropdowns:
       {
-            marginVertical:10,
-            marginHorizontal:10,
+            marginVertical: 10,
+            marginHorizontal: 10,
             paddingHorizontal: 8,
       },
       Switc:
       {
-            marginLeft:10,
-            marginRight:10,
-            marginBottom:10,
+            marginLeft: 10,
+            marginRight: 10,
+            marginBottom: 10,
       },
       Mothers:
-      {     
-            marginTop:10,
-          marginLeft: 10,
+      {
+            marginTop: 10,
+            marginLeft: 10,
             marginRight: 10,
             width: "95%",
             height: 160,
             borderRadius: 5,
-            backgroundColor: "#B0BEC5"  
+            backgroundColor: "#CFD8DC"
       },
       switchdrop:
       {
@@ -431,7 +474,7 @@ const styles = StyleSheet.create({
       },
 
       inputda:
-      {
+      {     
             margin: 5,
             borderColor: 'blue'
       },
@@ -448,7 +491,7 @@ const styles = StyleSheet.create({
       radio:
       {
             flexDirection: "row",
-            margin: 10,
+            marginTop: 5,
       },
       radiotext:
       {
