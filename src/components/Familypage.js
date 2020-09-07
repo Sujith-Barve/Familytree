@@ -11,7 +11,7 @@ import { sub } from 'react-native-reanimated';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 var originalFather = [];
 var originalMother = [];
-var i, manualentry, Fat_name, fat_ID;
+var i, manualentry, Fat_name, fat_ID,Mot_ID;
 
 // var submitpercentage = 1;
 export default class Aboutscreen extends React.Component {
@@ -36,8 +36,8 @@ export default class Aboutscreen extends React.Component {
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
                   motherdropvalue: 'None',
-                  switchValue: 0,
-                  switchValuemother: 0,
+                   switchValue: '',
+                  switchValuemother: '',
                   fathermanualentry: true,
                   mothermanualentry: true,
                   ChildName: '',
@@ -54,13 +54,7 @@ export default class Aboutscreen extends React.Component {
 
       fatherArray = [];
       motherArray = [];
-      toggleSwitch = (value) => {
-            this.setState({ switchValue: value })
-
-      }
-      toggleSwitches = (value) => {
-            this.setState({ switchValuemother: value })
-      }
+      
       getfatherdata = () => {
             // this.setState.IsLoading(true);
             return fetch('http://192.168.43.131:3000/getfatherdata')
@@ -159,28 +153,34 @@ export default class Aboutscreen extends React.Component {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             // let selectedFatherId = obj._id.toString()
             // console.log(selectedFatherId) 
-            if (this.state.switchValue == 0) {
+            if (this.state.switchValue == "0") {
                   this.setState({ fathermanualentry: true });
+                  console.log("Switch value is zero" + this.state.fathermanualentry)
                   Fat_name = this.state.FatherName;
 
             }
-            else {
+             else {
                   this.setState({ fathermanualentry: false });
+                  console.log("Switch value is 1" + this.state.fathermanualentry)
                   fat_ID = this.refs['pickers'].value();
-
+                  console.log("fat_ID is " + fat_ID)
             }
-            if(this.state.switchValuemother==0)
-            {
+
+            if(this.state.switchValuemother == "0") {
                   this.setState({mothermanualentry:true})
                   Mot_Name=this.state.MotherName
             }
-            else
-            {
+             else {
                   this.setState({mothermanualentry:false})
                   Mot_ID=this.refs['picker'].value();
             }
 
-            console.log("Not entered the None")
+            console.log("Entered data is ",this.state.username,
+            "Manual ENtry Father"+this.state.fathermanualentry,
+            "Father Name is "+this.state.FatherName,
+            "++++++=====MotherName is "+this.state.MotherName,
+            "Father Id is" +fat_ID,
+            "Mother ID is" +Mot_ID)
             // console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
@@ -195,6 +195,7 @@ export default class Aboutscreen extends React.Component {
                         MotherName: this.state.MotherName,
                         Gender: this.state.Gendervalue,
                         Father_ID: fat_ID,
+                        Mother_ID : Mot_ID,
                         MarriageStatus : this.state.martialvalue,
                         WifeName : this.state.WifeName,
                         ChildName : this.state.ChildName,
@@ -210,6 +211,8 @@ export default class Aboutscreen extends React.Component {
                         this.setState({username : ''})
                         this.setState({Gender : 'Male'})
                         this.setState({martialvalue : 'Bachelor'})
+                        this.getMotherdata();
+                        this.getfatherdata();
 
                   })
                   .catch(err => {
@@ -283,7 +286,7 @@ export default class Aboutscreen extends React.Component {
                                     borderColor={"#263238"}
                                     initial={0}
                                     value={this.state.switchValue}
-                                    onPress={value => this.toggleSwitch(value)}
+                                    onPress={value => this.setState({ switchValue: value })}
                               />
                               {
                                     (this.state.switchValue == "0") ?
@@ -292,7 +295,8 @@ export default class Aboutscreen extends React.Component {
                                                 mode="outlined"
                                                 value={this.state.FatherName}
                                                 onChangeText={FatherName => this.setState({ FatherName })}
-                                                onEndEditing={this.ShowHideTextComponentViewFather} />
+                                                // onEndEditing={this.ShowHideTextComponentViewFather}
+                                                 />
                                           :
                                           <Dropdown style={styles.drop}
                                                 label='Select Your Father'
@@ -317,7 +321,7 @@ export default class Aboutscreen extends React.Component {
                                     borderColor={"#263238"}
                                     initial={0}
                                     value={this.state.switchValuemother}
-                                    onPress={value => this.toggleSwitches(value)}
+                                    onPress={value => this.setState({ switchValuemother: value })}
                               />
                               {
                                     (this.state.switchValuemother == "0") ?
@@ -334,10 +338,10 @@ export default class Aboutscreen extends React.Component {
                                                 label='Select Your Mother'
                                                 data={this.state.motherval}
                                                 ref='picker'
-                                                onChangeText={text => {
-                                                      this.ShowHideTextComponentViewMother()
-                                                }
-                                                }
+                                                // onChangeText={text => {
+                                                //       this.ShowHideTextComponentViewMother()
+                                                // }
+                                                // }
                                                 defaultValue={this.state.motherdropvalue}
                                           />
                               }
