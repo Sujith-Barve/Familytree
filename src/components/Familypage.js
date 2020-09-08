@@ -9,6 +9,7 @@ import { Dropdown } from 'react-native-material-dropdown';
 import withUnmounted from '@ishawnwang/withunmounted'
 import { sub } from 'react-native-reanimated';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import {LOGIN_USER_ID} from '../../Constants'
 var originalFather = [];
 var originalMother = [];
 var i, manualentry, Fat_name, fat_ID,Mot_ID;
@@ -36,15 +37,14 @@ export default class Aboutscreen extends React.Component {
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
                   motherdropvalue: 'None',
-                   switchValue: '',
-                  switchValuemother: '',
+                   switchValue: '0',
+                  switchValuemother: '0',
                   fathermanualentry: true,
                   mothermanualentry: true,
                   ChildName: '',
                   ChildGendervalue: 'Male',
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
-
             };
       }
       //  isEnabled = fatherlength > 0
@@ -61,18 +61,18 @@ export default class Aboutscreen extends React.Component {
                   .then(response => response.json())
                   .then(fathernames => {
                         originalFather = fathernames;
-                        console.log("fathername is" + JSON.stringify(originalFather))
+                        // console.log("fathername is" + JSON.stringify(originalFather))
                         const fatherArray = originalFather.map(element => {
                               return {
                                     label: element.Name,
                                     value: element._id,
                               };
                         });
-                        console.log(JSON.stringify(fatherArray))
+                        // console.log(JSON.stringify(fatherArray))
                         this.setState({
                               fatherval: [...fatherArray]
                         }, () => {
-                              console.log("fatherval setstate failed" + JSON.stringify(this.state.fatherval));
+                              // console.log("fatherval setstate failed" + JSON.stringify(this.state.fatherval));
                         });
 
                         // else {
@@ -84,42 +84,42 @@ export default class Aboutscreen extends React.Component {
                   })
                   .catch(err => {
                         Alert.alert("Error" + err);
-                        console.log(err)
+                        // console.log(err)
                         // this.setState.IsLoading(false);
                   })
       }
 
       getMotherdata = () => {
-            console.log("I entered Motherdata")
+            // console.log("I entered Motherdata")
             // this.setState.IsLoading(true);
             return fetch('http://192.168.43.131:3000/getMotherdata')
                   .then(response => response.json())
                   .then(mothernames => {
                         originalMother = mothernames;
-                        console.log("Resp data is" + originalMother);
+                        // console.log("Resp data is" + originalMother);
                         const motherArray = originalMother.map(element => {
                               return {
                                     label: element.Name,
                                     value: element._id,
                               };
                         });
-                        console.log("Updation Done")
+                        // console.log("Updation Done")
 
                         this.setState({
                               motherval: [...motherArray]
                         }, () => {
-                              console.log("Motherval setstate failed")
+                              // console.log("Motherval setstate failed")
                         });
 
-                        console.log("motherval is" + JSON.stringify(this.state.motherval))
+                        // console.log("motherval is" + JSON.stringify(this.state.motherval))
                         // else this.setState.motherval(motherArray)
-                        console.log("MotherName is" + JSON.stringify(originalMother))
+                        // console.log("MotherName is" + JSON.stringify(originalMother))
                         // this.setState.IsLoading(false);
 
                   })
                   .catch(err => {
                         Alert.alert("Error" + err);
-                        console.log(err)
+                        // console.log(err)
                         // this.setState.IsLoading(false);
                   })
       }
@@ -155,32 +155,30 @@ export default class Aboutscreen extends React.Component {
             // console.log(selectedFatherId) 
             if (this.state.switchValue == "0") {
                   this.setState({ fathermanualentry: true });
-                  console.log("Switch value is zero" + this.state.fathermanualentry)
-                  Fat_name = this.state.FatherName;
+                  // console.log("Switch value is zero" + this.state.fathermanualentry)
 
             }
              else {
                   this.setState({ fathermanualentry: false });
-                  console.log("Switch value is 1" + this.state.fathermanualentry)
+                  // console.log("Switch value is 1" + this.state.fathermanualentry)
                   fat_ID = this.refs['pickers'].value();
-                  console.log("fat_ID is " + fat_ID)
+                  // console.log("fat_ID is " + fat_ID)
             }
 
             if(this.state.switchValuemother == "0") {
                   this.setState({mothermanualentry:true})
-                  Mot_Name=this.state.MotherName
             }
              else {
                   this.setState({mothermanualentry:false})
                   Mot_ID=this.refs['picker'].value();
             }
-
-            console.log("Entered data is ",this.state.username,
-            "Manual ENtry Father"+this.state.fathermanualentry,
-            "Father Name is "+this.state.FatherName,
-            "++++++=====MotherName is "+this.state.MotherName,
-            "Father Id is" +fat_ID,
-            "Mother ID is" +Mot_ID)
+            console.log("Login User Id is " + LOGIN_USER_ID)
+            // console.log("Entered data is ",this.state.username,
+            // "Manual ENtry Father"+this.state.fathermanualentry,
+            // "Father Name is "+this.state.FatherName,
+            // "++++++=====MotherName is "+this.state.MotherName,
+            // "Father Id is" +fat_ID,
+            // "Mother ID is" +Mot_ID)
             // console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
@@ -188,6 +186,7 @@ export default class Aboutscreen extends React.Component {
                         'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
+                        App_userID : LOGIN_USER_ID,
                         Name: this.state.username,
                         ManualEntryFather: this.state.fathermanualentry,
                         ManualEntryMother : this.state.mothermanualentry,
