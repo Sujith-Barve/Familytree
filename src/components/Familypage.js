@@ -8,7 +8,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Dropdown } from 'react-native-material-dropdown';
 import withUnmounted from '@ishawnwang/withunmounted'
 import { sub } from 'react-native-reanimated';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import {LOGIN_USER_ID} from '../../Constants'
 var originalFather = [];
 var originalMother = [];

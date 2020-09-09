@@ -71,7 +71,7 @@ const Screen3_StackNavigator = createStackNavigator({
   SearchBar: {
     screen: Search,
     navigationOptions: ({ navigation }) => ({
-        title:'Search Family',
+        title:null,
       headerLeft: ()=> <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
         backgroundColor: '#FF9800',
