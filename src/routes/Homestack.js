@@ -4,9 +4,9 @@ import { View, Image, TouchableOpacity } from 'react-native';
 // import all basic components
 
 //Import React Navigation
-import {createAppContainer} from 'react-navigation';
-import {createDrawerNavigator} from 'react-navigation-drawer';
-import {createStackNavigator} from 'react-navigation-stack';
+import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 
 //Import external files
 import home from '../components/Home';
@@ -18,7 +18,6 @@ import fampage from '../components/Familypage';
 class NavigationDrawerStructure extends Component {
   //Structure for the navigatin Drawer
   toggleDrawer = () => {
-    //Props to open/close the drawer
     this.props.navigationProps.toggleDrawer();
   };
   render() {
@@ -38,11 +37,11 @@ class NavigationDrawerStructure extends Component {
 
 const FirstActivity_StackNavigator = createStackNavigator({
   //All the screen from the Screen1 will be indexed here
-  AddFam : {
+  AddFam: {
     screen: familyadd,
     navigationOptions: ({ navigation }) => ({
-        title : null,
-      headerLeft: ()=> <NavigationDrawerStructure navigationProps={navigation} />,
+      title: null,
+      headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
         backgroundColor: '#FF9800',
       },
@@ -53,11 +52,11 @@ const FirstActivity_StackNavigator = createStackNavigator({
 
 const Screen2_StackNavigator = createStackNavigator({
   //All the screen from the Screen2 will be indexed here
-  FamPage :{
+  FamPage: {
     screen: fampage,
     navigationOptions: ({ navigation }) => ({
-        title : null,
-      headerLeft: ()=> <NavigationDrawerStructure navigationProps={navigation} />,
+      title: null,
+      headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
         backgroundColor: '#FF9800',
       },
@@ -71,8 +70,8 @@ const Screen3_StackNavigator = createStackNavigator({
   SearchBar: {
     screen: Search,
     navigationOptions: ({ navigation }) => ({
-        title:null,
-      headerLeft: ()=> <NavigationDrawerStructure navigationProps={navigation} />,
+      title: null,
+      headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
       headerStyle: {
         backgroundColor: '#FF9800',
       },
@@ -87,7 +86,7 @@ const Homestack = createDrawerNavigator({
     //Title
     screen: FirstActivity_StackNavigator,
     navigationOptions: {
-         title : null, 
+      title: null,
       drawerLabel: 'Welcome To Family Tree',
     },
   },
@@ -96,19 +95,19 @@ const Homestack = createDrawerNavigator({
     screen: Screen2_StackNavigator,
     navigationOptions: {
       drawerLabel: 'Create Family',
-      title : null,
+      title: null,
     },
   },
 
-    SearchBar :
-    {
+  SearchBar:
+  {
     screen: Screen3_StackNavigator,
     navigationOptions: {
-        title: 'Search',
-            headerShown: false,
+      title: 'Search',
+      headerShown: false,
       drawerLabel: 'Search Your Family',
     },
-},
+  },
 });
 
 export default createAppContainer(Homestack);
@@ -142,7 +141,7 @@ export default createAppContainer(Homestack);
 //             },
 
 //     },
-    
+
 //     // CreateEmp : 
 //     // {
 //     //     screen : createemp,
@@ -150,8 +149,8 @@ export default createAppContainer(Homestack);
 //     //         title : null, 
 //     //         }
 //     // },
-   
-    
+
+
 // };
 
 // const Homestack = createStackNavigator(valstack);

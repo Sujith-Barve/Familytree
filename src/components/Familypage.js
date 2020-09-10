@@ -6,12 +6,14 @@ import SwitchSelector from "react-native-switch-selector";
 import Icon from 'react-native-vector-icons/Feather';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Dropdown } from 'react-native-material-dropdown';
+import DatePicker from 'react-native-datepicker';
+// import DateTimePickerModal from "react-native-modal-datetime-picker";
 import withUnmounted from '@ishawnwang/withunmounted'
 import { sub } from 'react-native-reanimated';
-import {LOGIN_USER_ID} from '../../Constants'
+import { LOGIN_USER_ID } from '../../Constants'
 var originalFather = [];
 var originalMother = [];
-var i, manualentry, Fat_name, fat_ID,Mot_ID;
+var i, manualentry, Fat_name, fat_ID, Mot_ID;
 
 // var submitpercentage = 1;
 export default class Aboutscreen extends React.Component {
@@ -36,12 +38,14 @@ export default class Aboutscreen extends React.Component {
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
                   motherdropvalue: 'None',
-                   switchValue: '0',
+                  switchValue: '0',
                   switchValuemother: '0',
                   fathermanualentry: true,
                   mothermanualentry: true,
                   ChildName: '',
                   ChildGendervalue: 'Male',
+                  Age: null,
+                  isDatePickerVisible: false
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
             };
@@ -53,10 +57,12 @@ export default class Aboutscreen extends React.Component {
 
       fatherArray = [];
       motherArray = [];
-      
+
       getfatherdata = () => {
             // this.setState.IsLoading(true);
-            return fetch('http://192.168.43.131:3000/getfatherdata')
+            return fetch('http://192.168.43.131:3000/getfatherdata?' + new URLSearchParams({
+                  Age: this.state.Age
+            }))
                   .then(response => response.json())
                   .then(fathernames => {
                         originalFather = fathernames;
@@ -91,7 +97,9 @@ export default class Aboutscreen extends React.Component {
       getMotherdata = () => {
             // console.log("I entered Motherdata")
             // this.setState.IsLoading(true);
-            return fetch('http://192.168.43.131:3000/getMotherdata')
+            return fetch('http://192.168.43.131:3000/getMotherdata?' + new URLSearchParams({
+                  Age: this.state.Age
+            }))
                   .then(response => response.json())
                   .then(mothernames => {
                         originalMother = mothernames;
@@ -136,8 +144,8 @@ export default class Aboutscreen extends React.Component {
             return true;
       };
       componentDidMount() {
-            this.getMotherdata();
-            this.getfatherdata();
+            // this.getMotherdata();
+            // this.getfatherdata();
             this.backHandler = BackHandler.addEventListener(
                   "hardwareBackPress",
                   this.backAction
@@ -157,19 +165,19 @@ export default class Aboutscreen extends React.Component {
                   // console.log("Switch value is zero" + this.state.fathermanualentry)
 
             }
-             else {
+            else {
                   this.setState({ fathermanualentry: false });
                   // console.log("Switch value is 1" + this.state.fathermanualentry)
                   fat_ID = this.refs['pickers'].value();
                   // console.log("fat_ID is " + fat_ID)
             }
 
-            if(this.state.switchValuemother == "0") {
-                  this.setState({mothermanualentry:true})
+            if (this.state.switchValuemother == "0") {
+                  this.setState({ mothermanualentry: true })
             }
-             else {
-                  this.setState({mothermanualentry:false})
-                  Mot_ID=this.refs['picker'].value();
+            else {
+                  this.setState({ mothermanualentry: false })
+                  Mot_ID = this.refs['picker'].value();
             }
             console.log("Login User Id is " + LOGIN_USER_ID)
             // console.log("Entered data is ",this.state.username,
@@ -185,30 +193,35 @@ export default class Aboutscreen extends React.Component {
                         'Content-Type': 'application/json',
                   },
                   body: JSON.stringify({
-                        App_userID : LOGIN_USER_ID,
+                        App_userID: LOGIN_USER_ID,
                         Name: this.state.username,
                         ManualEntryFather: this.state.fathermanualentry,
-                        ManualEntryMother : this.state.mothermanualentry,
+                        ManualEntryMother: this.state.mothermanualentry,
                         FatherName: this.state.FatherName,
                         MotherName: this.state.MotherName,
                         Gender: this.state.Gendervalue,
                         Father_ID: fat_ID,
-                        Mother_ID : Mot_ID,
-                        MarriageStatus : this.state.martialvalue,
-                        WifeName : this.state.WifeName,
-                        ChildName : this.state.ChildName,
-                        ChildGender: this.state.ChildGendervalue
+                        Mother_ID: Mot_ID,
+                        MarriageStatus: this.state.martialvalue,
+                        WifeName: this.state.WifeName,
+                        ChildName: this.state.ChildName,
+                        ChildGender: this.state.ChildGendervalue,
+                        Age: this.state.Age,
+                        ChildGender: this.state.Gendervalue
                   })
             }).then(res => res.json())
                   .then(data => {
                         console.log(data);
                         Alert.alert(`Data is saved successfuly`)
                         // navigation.navigate('Home');
-                        this.setState({FatherName:''});
-                        this.setState({MotherName:''});
-                        this.setState({username : ''})
-                        this.setState({Gender : 'Male'})
-                        this.setState({martialvalue : 'Bachelor'})
+                        this.setState({ FatherName: '' });
+                        this.setState({ MotherName: '' });
+                        this.setState({ username: '' })
+                        this.setState({ Gender: 'Male' })
+                        this.setState({ martialvalue: 'Bachelor' })
+                        this.setState({ Age: null })
+                        this.setState({ WifeName: '' })
+                        this.setState({ Havingchildren: 'No' })
                         this.getMotherdata();
                         this.getfatherdata();
 
@@ -218,7 +231,11 @@ export default class Aboutscreen extends React.Component {
                   })
       }
 
-
+      getDropdownDataServer = () => {
+            console.log("Entered The getdata ][[[[[[[[[[[[[[[[[[[]]]]]]")
+            this.getMotherdata();
+            this.getfatherdata();
+      }
       dynamictextline = () => {
             console.log("Entered Dynamic Text line")
 
@@ -238,37 +255,95 @@ export default class Aboutscreen extends React.Component {
             //       )
             // }
       }
+      // showDatePicker = () => {
+      //       this.setState({ DatePickerVisibility: true });
+      // };
+
+      // hideDatePicker = () => {
+      //       this.setState({ DatePickerVisibility: false });
+      // };
+
+      // handleConfirm = (date) => {
+      //       console.warn("A date has been picked: ", date);
+      //       this.hideDatePicker();
+      // };
       render() {
             return (
                   <ScrollView style={styles.root}>
-                        <View style={styles.fathers}>
-                        <TextInput style={styles.inputda}
-                              label="Name"
+                        <View style={styles.usersback}>
+                              <TextInput style={styles.inputda}
+                                    label="Name"
+                                    borderColor="#455A64"
+
+                                    selectionColor="#455A64"
+                                    mode="outlined"
+                                    value={this.state.username}
+                                    onChangeText={username => this.setState({ username })}
+                              // userlength={value.length>0}
+                              />
+                              <Text style={{
+                                    fontSize: 15, paddingTop: 10,
+                                    paddingLeft: 10,
+                                    paddingRight: 10, fontFamily: 'sans-serif-light'
+                              }}>Select Your Gender :</Text>
+                              <View style={styles.radio}>
+                                    <RadioButton.Group
+                                          onValueChange={Gendervalue => this.setState({ Gendervalue })}
+                                          value={this.state.Gendervalue}
+                                    >
+                                          <RadioButton color="#263238" value="Male" />
+                                          <Text style={styles.radiotext}>Male</Text>
+                                          <RadioButton color="#263238" value="Female" />
+                                          <Text style={styles.radiotext}>Female</Text>
+                                          <RadioButton color="#263238" value="Others" />
+                                          <Text style={styles.radiotext}>Others</Text>
+
+                                    </RadioButton.Group>
+                              </View>
+                              <View>
+                                    {/* <TextInput style={styles.inputda}
+                              label="Age"
                               borderColor="#455A64"
                               
                               selectionColor="#455A64"
                               mode="outlined"
-                              value={this.state.username}
-                              onChangeText={username => this.setState({ username })}
+                              value={this.state.Age}
+                              onChangeText={Age => this.setState({ Age })}
+                              keyboardType = 'number-pad'
+                              onEndEditing={this.getDropdownDataServer}
                         // userlength={value.length>0}
-                        />
-                              <Text style={{ fontSize: 15, paddingTop: 10,
-                                    paddingLeft:10,
-                                    paddingRight:10, fontFamily: 'sans-serif-light' }}>Select Your Gender :</Text>
-                        <View style={styles.radio}>
-                              <RadioButton.Group 
-                                    onValueChange={Gendervalue => this.setState({ Gendervalue })}
-                                    value={this.state.Gendervalue}
-                              >
-                                    <RadioButton  color="#263238" value="Male" />
-                                    <Text style={styles.radiotext}>Male</Text>
-                                    <RadioButton  color="#263238" value="Female" />
-                                    <Text style={styles.radiotext}>Female</Text>
-                                    <RadioButton color="#263238" value="Others" />
-                                    <Text style={styles.radiotext}>Others</Text>
-
-                              </RadioButton.Group>
-                        </View>
+                        /> */}
+                                    <DatePicker
+                                          style={styles.date}
+                                          date={this.state.date} //initial date from state
+                                          mode="date" //The enum of date, datetime and time
+                                          placeholder="select date"
+                                          format="DD-MM-YYYY"
+                                          minDate="01-01-2016"
+                                          maxDate="01-01-2019"
+                                          confirmBtnText="Confirm"
+                                          cancelBtnText="Cancel"
+                                          customStyles={{
+                                                dateIcon: {
+                                                      position: 'absolute',
+                                                      left: 0,
+                                                      top: 4,
+                                                      marginLeft: 0
+                                                },
+                                                dateInput: {
+                                                      marginLeft: 36
+                                                }
+                                          }}
+                                          onDateChange={(date) => { this.setState({ date: date }) }}
+                                    />
+                                    {/* <Button title="Show Date Picker" onPress={this.showDatePicker} />
+                                    <DateTimePickerModal
+                                          isVisible={isDatePickerVisible}
+                                          mode="date"
+                                          onConfirm={handleConfirm}
+                                          onCancel={hideDatePicker}
+                                    /> */}
+                              </View>
                         </View>
                         <View style={styles.fathers}>
                               <Text style={{ fontSize: 15, padding: 10, fontFamily: 'sans-serif-light' }}>Father Name :</Text>
@@ -277,9 +352,9 @@ export default class Aboutscreen extends React.Component {
                                           { label: "Manual Entry", value: "0" },
                                           { label: "Select", value: "1" },
                                     ]}
-                                    activeColor={"Black"}
-                                    textColor={"Black"}
-                                    selectedColor={"white"}
+                                    activeColor={"#000000"}
+                                    textColor={"#000000"}
+                                    selectedColor={"#FFFFFF"}
                                     buttonColor={"#607D8B"}
                                     borderColor={"#263238"}
                                     initial={0}
@@ -293,8 +368,8 @@ export default class Aboutscreen extends React.Component {
                                                 mode="outlined"
                                                 value={this.state.FatherName}
                                                 onChangeText={FatherName => this.setState({ FatherName })}
-                                                // onEndEditing={this.ShowHideTextComponentViewFather}
-                                                 />
+                                          // onEndEditing={this.ShowHideTextComponentViewFather}
+                                          />
                                           :
                                           <Dropdown style={styles.drop}
                                                 label='Select Your Father'
@@ -313,8 +388,8 @@ export default class Aboutscreen extends React.Component {
                                           { label: "Manual Entry", value: "0" },
                                           { label: "Select", value: "1" },
                                     ]}
-                                    textColor={"Black"}
-                                    selectedColor={"white"}
+                                    textColor={"#000000"}
+                                    selectedColor={"#FFFFFF"}
                                     buttonColor={"#607D8B"}
                                     borderColor={"#263238"}
                                     initial={0}
@@ -329,7 +404,7 @@ export default class Aboutscreen extends React.Component {
                                                 value={this.state.MotherName}
                                                 //      motherlength={value.length>0}
                                                 onChangeText={MotherName => this.setState({ MotherName })}
-                                               
+
                                           />
                                           :
                                           <Dropdown
@@ -350,7 +425,7 @@ export default class Aboutscreen extends React.Component {
                                     onValueChange={martialvalue => this.setState({ martialvalue })}
                                     value={this.state.martialvalue}
                               >
-                                    <RadioButton  color="#263238" value="Bachelor" />
+                                    <RadioButton color="#263238" value="Bachelor" />
                                     <Text style={styles.radiotext}>Bachelor</Text>
                                     <RadioButton color="#263238" value="Married" />
                                     <Text style={styles.radiotext}>Married</Text>
@@ -370,7 +445,7 @@ export default class Aboutscreen extends React.Component {
                                                 onValueChange={Havingchildren => this.setState({ Havingchildren })}
                                                 value={this.state.Havingchildren}
                                           >
-                                                <RadioButton  color="#263238" value="Yes" />
+                                                <RadioButton color="#263238" value="Yes" />
                                                 <Text style={styles.radiotext}>Yes</Text>
                                                 <RadioButton color="#263238" value="No" />
                                                 <Text style={styles.radiotext}>No</Text>
@@ -385,8 +460,10 @@ export default class Aboutscreen extends React.Component {
                                                       value={this.state.ChildName}
                                                       onChangeText={ChildName => this.setState({ ChildName })}
                                                 />
-                                                <Text style={{ fontSize: 15, padding: 10,
-                                                       fontFamily: 'sans-serif-light' }}>Select Child Gender :</Text>
+                                                <Text style={{
+                                                      fontSize: 15, padding: 10,
+                                                      fontFamily: 'sans-serif-light'
+                                                }}>Select Child Gender :</Text>
 
                                                 <View style={styles.radio}>
                                                       <RadioButton.Group
@@ -397,7 +474,7 @@ export default class Aboutscreen extends React.Component {
                                                             <Text style={styles.radiotext}>Male</Text>
                                                             <RadioButton color="#263238" value="Female" />
                                                             <Text style={styles.radiotext}>Female</Text>
-                                                            <RadioButton  color="#263238" value="Others" />
+                                                            <RadioButton color="#263238" value="Others" />
                                                             <Text style={styles.radiotext}>Others</Text>
                                                       </RadioButton.Group>
                                                 </View>
@@ -427,12 +504,24 @@ const styles = StyleSheet.create({
       {
             flex: 1,
             flexDirection: "column",
-            
+
+      },
+      usersback:
+      {
+            marginLeft: 10,
+            marginTop: 10,
+            marginRight: 20,
+            width: "95%",
+            height: 190,
+            borderRadius: 5,
+            backgroundColor: "#CFD8DC"
+
+
       },
       fathers:
       {
             marginLeft: 10,
-            marginTop :10,
+            marginTop: 10,
             marginRight: 20,
             width: "95%",
             height: 160,
@@ -474,9 +563,14 @@ const styles = StyleSheet.create({
       {
             marginLeft: "53%",
       },
-
+      date:
+      {
+            marginLeft: 10,
+            marginRight: 10,
+            width: '95%',
+      },
       inputda:
-      {     
+      {
             margin: 5,
             borderColor: 'blue'
       },
