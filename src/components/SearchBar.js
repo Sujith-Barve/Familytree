@@ -29,6 +29,7 @@ export default class Example extends React.Component {
 
   }
 
+
   familysuggestion = () => {
     // console.log("I entered Familysuggestion" + LOGIN_USER_ID)
     fetch('http://192.168.43.131:3000/familysuggestion?' + new URLSearchParams({

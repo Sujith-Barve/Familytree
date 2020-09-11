@@ -2,12 +2,10 @@
 import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
 import SwitchSelector from "react-native-switch-selector";
-// import RadioForm,{RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Feather';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { Dropdown } from 'react-native-material-dropdown';
-import DatePicker from 'react-native-datepicker';
-// import DateTimePickerModal from "react-native-modal-datetime-picker";
 import withUnmounted from '@ishawnwang/withunmounted'
 import { sub } from 'react-native-reanimated';
 import { LOGIN_USER_ID } from '../../Constants'
@@ -45,7 +43,8 @@ export default class Aboutscreen extends React.Component {
                   ChildName: '',
                   ChildGendervalue: 'Male',
                   Age: null,
-                  isDatePickerVisible: false
+                  isDateTimePickerVisible: false,
+                  selecteddate: ''
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
             };
@@ -144,8 +143,8 @@ export default class Aboutscreen extends React.Component {
             return true;
       };
       componentDidMount() {
-            // this.getMotherdata();
-            // this.getfatherdata();
+            this.getMotherdata();
+            this.getfatherdata();
             this.backHandler = BackHandler.addEventListener(
                   "hardwareBackPress",
                   this.backAction
@@ -236,6 +235,31 @@ export default class Aboutscreen extends React.Component {
             this.getMotherdata();
             this.getfatherdata();
       }
+
+      _showDateTimePicker = () => this.setState({ isDateTimePickerVisible: true });
+
+      _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
+
+      _handleDatePicked = (pickeddate) => {
+            day = pickeddate.getDate();
+            month = pickeddate.getMonth();
+            year = pickeddate.getFullYear();
+            console.log('A date has been picked: ' + day + '-' + month + '-' + year);
+            exdate = day + '-' + month + '-' + year
+            this._hideDateTimePicker();
+            this.setState({ selecteddate: day + '-' + month + '-' + year })
+            Alert.alert("Your Date of Birth is " + this.state.selecteddate)
+      };
+
+      onFocus = () => {
+            this._handleDatePicked();
+      }
+
+
+
+
+
+
       dynamictextline = () => {
             console.log("Entered Dynamic Text line")
 
@@ -313,7 +337,24 @@ export default class Aboutscreen extends React.Component {
                               onEndEditing={this.getDropdownDataServer}
                         // userlength={value.length>0}
                         /> */}
-                                    <DatePicker
+                                    <TextInput
+                                          mode={"outlined"}
+                                          style={{ marginLeft: 15, marginRight: 10 }}
+                                          placeholder="Date of Birth"
+                                          onFocus={() => this._showDateTimePicker()}
+                                          value={this.state.selecteddate}
+
+                                    />
+                                    {/* //--------------------------------------DateTimePicker */}
+                                    <DateTimePicker
+                                          isVisible={this.state.isDateTimePickerVisible}
+                                          onConfirm={this._handleDatePicked}
+                                          onCancel={this._hideDateTimePicker}
+                                          mode={'date'}
+                                          datePickerModeAndroid={'spinner'}
+
+                                    />
+                                    {/* <DatePicker
                                           style={styles.date}
                                           date={this.state.date} //initial date from state
                                           mode="date" //The enum of date, datetime and time
@@ -335,13 +376,6 @@ export default class Aboutscreen extends React.Component {
                                                 }
                                           }}
                                           onDateChange={(date) => { this.setState({ date: date }) }}
-                                    />
-                                    {/* <Button title="Show Date Picker" onPress={this.showDatePicker} />
-                                    <DateTimePickerModal
-                                          isVisible={isDatePickerVisible}
-                                          mode="date"
-                                          onConfirm={handleConfirm}
-                                          onCancel={hideDatePicker}
                                     /> */}
                               </View>
                         </View>
@@ -512,7 +546,7 @@ const styles = StyleSheet.create({
             marginTop: 10,
             marginRight: 20,
             width: "95%",
-            height: 190,
+            height: 215,
             borderRadius: 5,
             backgroundColor: "#CFD8DC"
 
