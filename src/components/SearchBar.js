@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dropdown } from 'react-native-material-dropdown';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import AutoTags from 'react-native-tag-autocomplete';
-import { TextInput } from 'react-native-paper'
+import { TextInput, Button } from 'react-native-paper'
 var suggestionhelp = [];
 import { LOGIN_USER_ID } from '../../Constants'
 export default class Example extends React.Component {
@@ -25,13 +26,17 @@ export default class Example extends React.Component {
 
   handleAddition = contact => {
     //suggestion clicked, push it to our tags array
-    this.setState({ tagsSelected: this.state.tagsSelected.concat([contact]) });
-
+    if (this.state.tagsSelected.length < 1) {
+      this.setState({ tagsSelected: this.state.tagsSelected.concat([contact]) });
+    }
+    else {
+      Alert.alert("You can Enter Only One Family")
+      console.log("Enter Only One family to proceed")
+    }
   }
 
-
   familysuggestion = () => {
-    // console.log("I entered Familysuggestion" + LOGIN_USER_ID)
+    console.log("I entered Familysuggestion" + LOGIN_USER_ID)
     fetch('http://192.168.43.131:3000/familysuggestion?' + new URLSearchParams({
       App_userID: LOGIN_USER_ID
     }))
@@ -60,7 +65,9 @@ export default class Example extends React.Component {
   componentDidMount() {
     this.familysuggestion();
   }
+  // submitData = () => {
 
+  // }
   render() {
     return (
       <View style={styles.container}>
@@ -69,15 +76,7 @@ export default class Example extends React.Component {
             Search Your Family
           </Text>
           <View style={styles.Autoselect}>
-            {/* <TextInput style={{ marginLeft: 15, marginRight: 10 }}
-              label="Search Your Family"
-              mode="outlined"
-              value={this.state.searchFamily}
-              onChangeText={searchFamily => this.setState({ searchFamily })}
-              autoComp
-              onEndEditing={this.ShowHideTextComponentViewFather}
-            /> */}
-            <AutoTags
+            <AutoTags style={styles.autotags}
               suggestions={this.state.suggestions}
               tagsSelected={this.state.tagsSelected}
               placeholder="Search Your Family"
@@ -85,8 +84,19 @@ export default class Example extends React.Component {
               handleDelete={this.handleDelete}
             />
           </View>
+          <View style={{ marginTop: 10, }}>
+            <Button
+              style={styles.submitButtonr}
+              mode="contained"
+              onPress={() => this.props.navigation.navigate('AddFam', {
+                suggestions: this.state.suggestions,
+              })}
+              title="Submit">
+              Submit
+            </Button>
+          </View>
         </View>
-      </View>
+      </View >
     );
   }
 }
@@ -97,11 +107,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
-  Autoselect:
+  autotags:
   {
-    marginLeft: 10,
-    marginRight: 10,
-    marginTop: 10,
+    // marginLeft: 10,
+    // marginRight: 10,
+    width: "100%",
+    borderRadius: 10,
+    borderWidth: 2,
+    padding: 10,
+    borderColor: '#b9bdba'
 
   },
   header: {
@@ -113,23 +127,32 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     marginBottom: 10,
   },
-  autocompleteContainer: {
-    flex: 1,
-    left: 20,
-    position: 'absolute',
-    right: 20,
-    top: 100,
-    zIndex: 1
+  // autocompleteContainer: {
+  //   flex: 1,
+  //   left: 20,
+  //   position: 'absolute',
+  //   right: 20,
+  //   top: 100,
+  //   zIndex: 1,
+  // },
+  usersback:
+  {
+    marginLeft: 10,
+    marginTop: 10,
+    marginRight: 20,
+    width: "95%",
+    height: 215,
+    borderRadius: 5,
+    backgroundColor: "#CFD8DC"
   },
   label: {
-    color: "#614b63",
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
     fontSize: 30,
     fontFamily: "Cochin"
     , fontWeight: "bold",
-    textShadowColor: '#00ff00',
+    // textShadowColor: '#00ff00',
     textShadowRadius: 8,
   },
   messageContainer: {
@@ -143,5 +166,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#efeaea',
     height: 200,
     textAlignVertical: 'top',
-  }
+  },
+  submitButtonr:
+  {
+    // justifyContent: 'flex-end',
+    padding: 2,
+    marginTop: 20,
+    marginLeft: 8,
+    marginRight: 8,
+    borderRadius: 10,
+    // marginTop: 10,
+    width: "92%"
+  },
 });

@@ -610,7 +610,6 @@ const styles = StyleSheet.create({
       },
       submitButtonr:
       {
-
             justifyContent: 'flex-end',
             padding: 2,
             marginLeft: 8,
