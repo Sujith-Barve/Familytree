@@ -1,9 +1,10 @@
 import React from 'react';
 import { Dropdown } from 'react-native-material-dropdown';
 import { StyleSheet, Text, View, Alert, ScrollView, Button, TextInput } from 'react-native';
-import AutoTags from 'react-native-tag-autocomplete';
+// import AutoTags from 'react-native-tag-autocomplete';
 // import { Button, RadioButton, TextInput } from 'react-native-paper'; 
 var suggestionhelp = [];
+import Select from 'react-native-select-plus';
 import { LOGIN_USER_ID } from '../../Constants'
 export default class Searchbar extends React.Component {
 
@@ -23,25 +24,31 @@ export default class Searchbar extends React.Component {
     super(props);
     this.state = {
       username: '',
+      value: null,
+      items: [
+        { key: 1, section: true, label: "Fruits" },
+        { key: 2, label: "Red Apples" },
+        { key: 3, label: "Cherries" },
+        { key: 4, label: "Cranberries" },
+        { key: 5, label: "Pink Grapefruit" },
+        { key: 6, label: "Raspberries" },
+        { key: 7, section: true, label: "Vegetables" },
+        { key: 8, label: "Beets" },
+        { key: 9, label: "Red Peppers" },
+        { key: 10, label: "Radishes" },
+        { key: 11, label: "Radicchio" },
+        { key: 12, label: "Red Onions" },
+        { key: 13, label: "Red Potatoes" },
+        { key: 14, label: "Rhubarb" },
+        { key: 15, label: "Tomatoes" }
+      ]
     };
   }
-  handleDelete = index => {
-    //tag deleted, remove from our tags array
-    let tagsSelected = this.state.tagsSelected;
-    tagsSelected.splice(index, 1);
-    this.setState({ tagsSelected });
-  }
 
-  handleAddition = contact => {
-    //suggestion clicked, push it to our tags array
-    if (this.state.tagsSelected.length < 1) {
-      this.setState({ tagsSelected: this.state.tagsSelected.concat([contact]) });
-    }
-    else {
-      Alert.alert("You can Enter Only One Family")
-      console.log("Enter Only One family to proceed")
-    }
-  }
+  onSelectedItemsChange = (key, value) => {
+    this.setState({ value: value });
+  };
+
 
   familysuggestion = () => {
     console.log("I entered Familysuggestion" + LOGIN_USER_ID)
@@ -89,6 +96,7 @@ export default class Searchbar extends React.Component {
   // }
   render() {
     const { navigate } = this.props.navigation;
+    const { value, items } = this.state;
     return (
       // <View style={styles.container}>
       //   <Text style={styles.label}>
@@ -131,12 +139,22 @@ export default class Searchbar extends React.Component {
 
       <View style={styles.container}>
         {/*Input to get the value from the user*/}
-        <TextInput
+        {/* <TextInput
           value={this.state.username}
           onChangeText={username => this.setState({ username })}
           placeholder={'Enter Any value'}
           style={styles.textInput}
+        /> */}
+        <Select
+          data={items}
+          width={250}
+          placeholder="Select a value ..."
+          onSelect={this.onSelectedItemsChange.bind(this)}
+          search={true}
         />
+        {/* <View>
+          <Text>{value}</Text>
+        </View> */}
         <View style={styles.buttonStyle}>
           <Button
             title="Submit"
