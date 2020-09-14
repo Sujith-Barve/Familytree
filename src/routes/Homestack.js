@@ -13,6 +13,8 @@ import home from '../components/Home';
 import Search from '../components/SearchBar'
 import familyadd from '../components/familyadd';
 import fampage from '../components/Familypage';
+import SideMenu from '../components/Sidemenu'
+import Display from '../components/DispalayFamily'
 
 
 class NavigationDrawerStructure extends Component {
@@ -80,16 +82,24 @@ const Screen3_StackNavigator = createStackNavigator({
   },
 });
 
+const Screen4_StackNavigator = createStackNavigator({
+  //All the screen from the Screen3 will be indexed here
+  Display: {
+    screen: Display,
+    navigationOptions: ({ navigation }) => ({
+      title: null,
+      headerLeft: () => <NavigationDrawerStructure navigationProps={navigation} />,
+      headerStyle: {
+        backgroundColor: '#FF9800',
+      },
+      headerTintColor: '#fff',
+    }),
+  },
+});
+
 const Homestack = createDrawerNavigator({
   //Drawer Optons and indexing
-  AddFam: {
-    //Title
-    screen: FirstActivity_StackNavigator,
-    navigationOptions: {
-      title: null,
-      drawerLabel: 'Welcome To Family Tree',
-    },
-  },
+
   FamPage: {
     //Title
     screen: Screen2_StackNavigator,
@@ -106,6 +116,23 @@ const Homestack = createDrawerNavigator({
       title: 'Search',
       headerShown: false,
       drawerLabel: 'Search Your Family',
+    },
+  },
+  AddFam: {
+    //Title
+    screen: FirstActivity_StackNavigator,
+    navigationOptions: {
+      title: null,
+      drawerLabel: 'Welcome To Family Tree',
+    },
+  },
+
+  DisplayFamily: {
+    //Title
+    screen: Screen4_StackNavigator,
+    navigationOptions: {
+      title: null,
+      // drawerLabel: 'Display',
     },
   },
 });
