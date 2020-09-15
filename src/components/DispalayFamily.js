@@ -1,21 +1,61 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
 import { TextInput } from 'react-native-paper';
-var usernameval;
+import { fetchnameusingId } from '../components/FetchnameusingId'
+var usernameval, key;
+// var familyitem = [];
 export default class familydisplay extends React.Component {
+    constructor(props) {
+        //constructor to set default state  
+        super(props);
+        this.state = {
+            // familydata: [],
+            items: []
+        };
+    }
+    familysuggestion = () => {
+        console.log("I entered Display FAmily Method" + key)
+        fetch('http://192.168.43.131:3000/familysuggestionfetching?' + new URLSearchParams({
+            familysearchid: key
+        }))
+            .then(response => response.json())
+            .then(familyname => {
+                const suggestionhelp = familyname.map(element => {
+                    var FatherNameup = fetchnameusingId(element.FatherName)
+                    var MotherNameup = fetchnameusingId(element.MotherName)
+                    return {
+                        Name: element.Name,
+                        FatherName: FatherNameup,
+                        MotherName: MotherNameup,
+
+                    };
+                    console.log("Name is ", familyname);
+                });
+
+                this.setState({
+                    items: [...suggestionhelp]
+                }, () => {
+                    // console.log("Motherval setstate failed")
+                });
+                console.log(JSON.stringify(this.state.items, "Suggestion is" + familyname));
+
+            })
+            .catch(err => {
+                console.log("Error" + err);
+            })
+    }
+    componentDidMount() {
+        this.familysuggestion();
+    }
 
 
     render() {
         const { navigation } = this.props;
-        const user_name = navigation.getParam('userName', 'NO-User');
-        const other_param = navigation.getParam('otherParam', 'some default value');
+        key = navigation.getParam('key', '123');
+        // const other_param = navigation.getParam('otherParam', 'some default value');
         return (
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <Text style={{ marginTop: 16, fontSize: 20, }}>
-                    This is Profile Screen and we receive value from Home Screen
-                </Text>
-                <Text style={styles.textStyle}>User Name: {JSON.stringify(user_name)}</Text>
-                <Text style={styles.textStyle}>Other Param: {JSON.stringify(other_param)}</Text>
+                <Text style={styles.textStyle}>key: {JSON.stringify(key)}</Text>
                 <View style={styles.buttonStyle}>
                     <Button
                         title="Go back"

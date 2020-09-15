@@ -5,7 +5,10 @@ import { StyleSheet, Text, View, Alert, ScrollView, Button, TextInput } from 're
 // import { Button, RadioButton, TextInput } from 'react-native-paper'; 
 var suggestionhelp = [];
 import Select from 'react-native-select-plus';
-import { LOGIN_USER_ID } from '../../Constants'
+import { LOGIN_USER_ID } from '../../Constants';
+import { Surface, Shape } from '@react-native-community/art';
+import * as Progress from 'react-native-progress';
+
 export default class Searchbar extends React.Component {
 
   // constructor(props) {
@@ -25,30 +28,36 @@ export default class Searchbar extends React.Component {
     this.state = {
       username: '',
       value: null,
-      items: [
-        { key: 1, section: true, label: "Fruits" },
-        { key: 2, label: "Red Apples" },
-        { key: 3, label: "Cherries" },
-        { key: 4, label: "Cranberries" },
-        { key: 5, label: "Pink Grapefruit" },
-        { key: 6, label: "Raspberries" },
-        { key: 7, section: true, label: "Vegetables" },
-        { key: 8, label: "Beets" },
-        { key: 9, label: "Red Peppers" },
-        { key: 10, label: "Radishes" },
-        { key: 11, label: "Radicchio" },
-        { key: 12, label: "Red Onions" },
-        { key: 13, label: "Red Potatoes" },
-        { key: 14, label: "Rhubarb" },
-        { key: 15, label: "Tomatoes" }
-      ]
+      items: [],
+      key: null,
+      progress: 0,
+      indeterminate: true,
+      isloading: true,
+
     };
   }
 
+
   onSelectedItemsChange = (key, value) => {
     this.setState({ value: value });
-  };
+    this.setState({ key: key })
+    console.log("key" + key, "value" + value);
 
+  };
+  animate() {
+    let progress = 0;
+    this.setState({ progress });
+    setTimeout(() => {
+      this.setState({ indeterminate: false });
+      setInterval(() => {
+        progress += Math.random() / 5;
+        if (progress > 1) {
+          progress = 1;
+        }
+        this.setState({ progress });
+      }, 500);
+    }, 1500);
+  }
 
   familysuggestion = () => {
     console.log("I entered Familysuggestion" + LOGIN_USER_ID)
@@ -59,114 +68,70 @@ export default class Searchbar extends React.Component {
       .then(familyname => {
         const suggestionhelp = familyname.map(element => {
           return {
-            name: element.Name,
-            value: element._id,
+            label: element.Name,
+            key: element._id,
           };
         });
 
         this.setState({
-          suggestions: [...suggestionhelp]
+          items: [...suggestionhelp]
         }, () => {
           // console.log("Motherval setstate failed")
         });
-
+        console.log("Hello isloading is false now" + JSON.stringify(this.state.items));
+        this.setState({ isloading: false })
       })
       .catch(err => {
         console.log("Error" + err);
-        // console.log(err)
-        // this.setState.IsLoading(false);
       })
+
   }
   componentDidMount() {
+    this.animate();
     this.familysuggestion();
   }
-  // Buttonpressed() {
-  //   // console.log("username isddadbasjkb " + this.state.username)
-  //   this.props.navigation.navigate(
-  //     'DisplayFamily',
-  //     {
-  //       // ...this.state.suggestions,
-  //       username: this.state.username
-  //     }
-  //   )
-  //   console.log("username is " + this.state.username)
-  // }
-  // submitData = () => {
 
-  // }
   render() {
     const { navigate } = this.props.navigation;
     const { value, items } = this.state;
     return (
-      // <View style={styles.container}>
-      //   <Text style={styles.label}>
-      //     Search Your Family
-      //     </Text>
-      //   {/* <View style={styles.Autoselect}> */}
-      //   {/* <AutoTags style={styles.autotags}
-      //       suggestions={this.state.suggestions}
-      //       tagsSelected={this.state.tagsSelected}
-      //       placeholder="Search Your Family"
-      //       handleAddition={this.handleAddition}
-      //       handleDelete={this.handleDelete}
-      //     /> */}
-      //   <TextInput style={styles.textInput}
-      //     label="Name"
-      //     borderColor="#00000"
-      //     selectionColor="#455A64"
-      //     mode="outlined"
-      //     value={this.state.username}
-      //     onChangeText={username => this.setState({ username })}
-      //   // userlength={value.length>0}
-      //   />
-      //   {/* </View> */}
-      //   <Button
-      //     style={styles.submitButtonr}
-      //     mode="contained"
-      //     onPress={() => {
-      //       this.props.navigation.navigate('DisplayFamily',
-      //         { username: this.state.username }
-      //       )
-      //       console.log("Username is", this.state.username)
-      //     }
-      //     }
-      //     title="Submit">
-      //     Submit
-      //       </Button>
-      // </View >
-
-
-
       <View style={styles.container}>
-        {/*Input to get the value from the user*/}
-        {/* <TextInput
-          value={this.state.username}
-          onChangeText={username => this.setState({ username })}
-          placeholder={'Enter Any value'}
-          style={styles.textInput}
-        /> */}
-        <Select
-          data={items}
-          width={250}
-          placeholder="Select a value ..."
-          onSelect={this.onSelectedItemsChange.bind(this)}
-          search={true}
-        />
-        {/* <View>
-          <Text>{value}</Text>
-        </View> */}
-        <View style={styles.buttonStyle}>
-          <Button
-            title="Submit"
-            // color="#00B0FF"  
-            onPress={() =>
-              this.props.navigation.navigate('Display', {
-                userName: this.state.username,
-                otherParam: '101',
-              })
-            }
-          />
-        </View>
+        {this.state.isloading == true ?
+          <View>
+            <Text style={{
+              marginTop: 100,
+            }}>Loading Please wait</Text>
+            <View style={styles.circles}>
+              <Progress.CircleSnail style={styles.progress} />
+              {/* <Progress.CircleSnail
+            style={styles.progress}
+            color={['#F44336', '#2196F3', '#009688']}
+          /> */}
+            </View>
+          </View>
+          :
+          <View>
+            <Select
+              data={items}
+              width={250}
+              placeholder="Select a value ..."
+              onSelect={this.onSelectedItemsChange.bind(this)}
+              search={true}
+            />
+            {/* <Text>{this.state.key}</Text> */}
+            <View style={{ marginTop: 20 }}>
+              <Button style={styles.buttonStyle}
+                title="Submit"
+                // color="#00B0FF" 
+                onPress={() =>
+                  this.props.navigation.navigate('Display', {
+                    key: this.state.key
+                  })
+                }
+              />
+            </View>
+          </View>
+        }
       </View>
     );
   }
@@ -186,7 +151,21 @@ const styles = StyleSheet.create({
     width: "93%",
     marginTop: 50,
     backgroundColor: "red",
-  }
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  circles: {
+    flex: 1,
+    // flexDirection: 'row',
+    alignItems: 'center',
+
+  },
+  progress: {
+    margin: 10,
+  },
 });
 // const styles = StyleSheet.create({
 //   container: {

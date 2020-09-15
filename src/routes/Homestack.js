@@ -114,8 +114,8 @@ const Homestack = createDrawerNavigator({
     screen: Screen3_StackNavigator,
     navigationOptions: {
       title: 'Search',
-      headerShown: false,
       drawerLabel: 'Search Your Family',
+      title: null,
     },
   },
   AddFam: {
