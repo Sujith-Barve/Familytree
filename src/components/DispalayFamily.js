@@ -3,6 +3,8 @@ import { View, StyleSheet, Text, Button } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { fetchnameusingId } from '../components/FetchnameusingId'
 var usernameval, key;
+var dataArray = [];
+var originaldata = [];
 // var familyitem = [];
 export default class familydisplay extends React.Component {
     constructor(props) {
@@ -10,40 +12,29 @@ export default class familydisplay extends React.Component {
         super(props);
         this.state = {
             // familydata: [],
-            items: []
+            items: [],
+            Name: '',
+            FatherName: '',
+            MotherName: ''
         };
     }
     familysuggestion = () => {
+        var FatherNameup, MotherNameup;
         console.log("I entered Display FAmily Method" + key)
-        fetch('http://192.168.43.131:3000/familysuggestionfetching?' + new URLSearchParams({
+        return fetch('http://192.168.43.131:3000/familysuggestionfetching?' + new URLSearchParams({
             familysearchid: key
         }))
             .then(response => response.json())
-            .then(familyname => {
-                const suggestionhelp = familyname.map(element => {
-                    var FatherNameup = fetchnameusingId(element.FatherName)
-                    var MotherNameup = fetchnameusingId(element.MotherName)
-                    return {
-                        Name: element.Name,
-                        FatherName: FatherNameup,
-                        MotherName: MotherNameup,
-
-                    };
-                    console.log("Name is ", familyname);
-                });
-
-                this.setState({
-                    items: [...suggestionhelp]
-                }, () => {
-                    // console.log("Motherval setstate failed")
-                });
-                console.log(JSON.stringify(this.state.items, "Suggestion is" + familyname));
-
+            .then(data => {
+                console.log("Response is " + data.FatherData.Name)
+                this.setState({ Name: data.FatherData.Name })
             })
             .catch(err => {
                 console.log("Error" + err);
             })
     }
+
+
     componentDidMount() {
         this.familysuggestion();
     }
@@ -55,7 +46,7 @@ export default class familydisplay extends React.Component {
         // const other_param = navigation.getParam('otherParam', 'some default value');
         return (
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <Text style={styles.textStyle}>key: {JSON.stringify(key)}</Text>
+                <Text style={styles.textStyle}>Name is {this.state.Name}</Text>
                 <View style={styles.buttonStyle}>
                     <Button
                         title="Go back"
