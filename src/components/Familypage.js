@@ -87,7 +87,7 @@ export default class Aboutscreen extends React.Component {
 
                   })
                   .catch(err => {
-                        Alert.alert("Error" + err);
+                        console.log("Error" + err);
                         // console.log(err)
                         // this.setState.IsLoading(false);
                   })
@@ -124,7 +124,7 @@ export default class Aboutscreen extends React.Component {
 
                   })
                   .catch(err => {
-                        Alert.alert("Error" + err);
+                        console.log("Error" + err);
                         // console.log(err)
                         // this.setState.IsLoading(false);
                   })
