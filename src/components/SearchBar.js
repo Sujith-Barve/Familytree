@@ -102,7 +102,12 @@ export default class Searchbar extends React.Component {
               marginTop: 100,
             }}>Loading Please wait</Text>
             <View style={styles.circles}>
-              <Progress.Circle
+              {/* <Progress.Circle
+                style={styles.progress}
+                progress={this.state.progress}
+                indeterminate={this.state.indeterminate}
+              /> */}
+              <Progress.Pie
                 style={styles.progress}
                 progress={this.state.progress}
                 indeterminate={this.state.indeterminate}

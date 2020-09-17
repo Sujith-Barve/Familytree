@@ -22,7 +22,7 @@ export default class Aboutscreen extends React.Component {
                   username: '',
                   FatherName: '',
                   MotherName: '',
-                  WifeName: '',
+                  Spouse: '',
                   ChildrenName: '',
                   isLoading: false,
                   fatherval: [],
@@ -38,8 +38,10 @@ export default class Aboutscreen extends React.Component {
                   motherdropvalue: 'None',
                   switchValue: '0',
                   switchValuemother: '0',
+                  SwitchValuespouse: '0',
                   fathermanualentry: true,
                   mothermanualentry: true,
+                  spousemanualentry: true,
                   ChildName: '',
                   ChildGendervalue: 'Male',
                   Age: null,
@@ -154,6 +156,12 @@ export default class Aboutscreen extends React.Component {
       componentWillUnmount() {
             this.backHandler.remove();
       }
+      // componentDidUpdate(prevProps, prevState) {
+      //       // Typical usage (don't forget to compare props):
+      //       if (this.state.Gender !== prevProps.userID) {
+      //             this.fetchData(this.props.userID);
+      //       }
+      // }
 
       submitData = () => {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
@@ -178,6 +186,18 @@ export default class Aboutscreen extends React.Component {
                   this.setState({ mothermanualentry: false })
                   Mot_ID = this.refs['picker'].value();
             }
+            if (this.state.SwitchValuespouse == "0") {
+                  this.setState({ spousemanualentry: true })
+            }
+            else {
+                  this.setState({ spousemanualentry: false })
+                  if (this.state.Gendervalue == "Male") {
+                        Spouse_ID = this.refs['pickerWife'].value();
+                  }
+                  else {
+                        Spouse_ID = this.refs['pickerHusband'].value();
+                  }
+            }
             console.log("Login User Id is " + LOGIN_USER_ID)
             // console.log("Entered data is ",this.state.username,
             // "Manual ENtry Father"+this.state.fathermanualentry,
@@ -196,17 +216,21 @@ export default class Aboutscreen extends React.Component {
                         Name: this.state.username,
                         ManualEntryFather: this.state.fathermanualentry,
                         ManualEntryMother: this.state.mothermanualentry,
+                        ManualEntrySpouse: this.state.spousemanualentry,
                         FatherName: this.state.FatherName,
                         MotherName: this.state.MotherName,
                         Gender: this.state.Gendervalue,
                         Father_ID: fat_ID,
                         Mother_ID: Mot_ID,
+                        Spouse_ID: Spouse_ID,
                         MarriageStatus: this.state.martialvalue,
-                        WifeName: this.state.WifeName,
+                        WifeName: this.state.SpouseName,
                         ChildName: this.state.ChildName,
                         ChildGender: this.state.ChildGendervalue,
                         Age: this.state.Age,
-                        ChildGender: this.state.Gendervalue
+                        ChildGender: this.state.Gendervalue,
+                        Havingchildren: this.state.Havingchildren,
+
                   })
             }).then(res => res.json())
                   .then(data => {
@@ -219,10 +243,12 @@ export default class Aboutscreen extends React.Component {
                         this.setState({ Gender: 'Male' })
                         this.setState({ martialvalue: 'Bachelor' })
                         this.setState({ Age: null })
-                        this.setState({ WifeName: '' })
+                        this.setState({ SpouseName: '' })
                         this.setState({ Havingchildren: 'No' })
+                        this.setState({ SpouseName: '' })
                         this.getMotherdata();
                         this.getfatherdata();
+
 
                   })
                   .catch(err => {
@@ -467,12 +493,67 @@ export default class Aboutscreen extends React.Component {
                         </View>
                         {this.state.martialvalue == "Married" ?
                               <View>
-                                    <TextInput style={styles.inputda}
+                                    {/* <TextInput style={styles.inputda}
                                           label="Wife Name"
                                           mode="outlined"
                                           value={this.state.WifeName}
                                           onChangeText={WifeName => this.setState({ WifeName })}
-                                    />
+                                    /> */}
+
+                                    <View style={styles.Mothers}>
+                                          <Text style={{ fontSize: 15, padding: 10, fontFamily: 'sans-serif-light' }}>Spouse Name :</Text>
+                                          <SwitchSelector style={styles.Switc}
+                                                options={[
+                                                      { label: "Manual Entry", value: "0" },
+                                                      { label: "Select", value: "1" },
+                                                ]}
+                                                textColor={"#000000"}
+                                                selectedColor={"#FFFFFF"}
+                                                buttonColor={"#607D8B"}
+                                                borderColor={"#263238"}
+                                                initial={0}
+                                                value={this.state.SwitchValuespouse}
+                                                onPress={value => this.setState({ SwitchValuespouse: value })}
+                                          />
+                                          {
+                                                (this.state.SwitchValuespouse == "0") ?
+                                                      <TextInput style={{ marginLeft: 15, marginRight: 10 }}
+                                                            label="SpouseName"
+                                                            mode="outlined"
+                                                            value={this.state.SpouseName}
+                                                            //      motherlength={value.length>0}
+                                                            onChangeText={SpouseName => this.setState({ SpouseName })}
+
+                                                      />
+                                                      :
+                                                      <View>
+                                                            {(this.state.Gendervalue == "Male") ?
+                                                                  <Dropdown
+                                                                        label='Select Your Spouse'
+                                                                        data={this.state.motherval}
+                                                                        ref='pickerWife'
+                                                                        // onChangeText={text => {
+                                                                        //       this.ShowHideTextComponentViewMother()
+                                                                        // }
+                                                                        // }
+                                                                        defaultValue={this.state.motherdropvalue}
+                                                                  /> :
+                                                                  <Dropdown
+                                                                        label='Select Your Spouse'
+                                                                        data={this.state.fatherval}
+                                                                        ref='pickerHusband'
+                                                                        // onChangeText={text => {
+                                                                        //       this.ShowHideTextComponentViewMother()
+                                                                        // }
+                                                                        // }
+                                                                        defaultValue={this.state.motherdropvalue}
+                                                                  />
+
+                                                            }
+                                                      </View>
+                                          }
+                                    </View>
+
                                     <Text style={{ margin: 10, fontSize: 15 }}>Having Children</Text>
                                     <View style={styles.radio}>
                                           <RadioButton.Group

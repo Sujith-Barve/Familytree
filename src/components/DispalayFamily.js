@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, Button } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import { Col, Row, Grid } from "react-native-easy-grid";
 // import { fetchnameusingId } from '../components/FetchnameusingId'
 import { Surface, Shape } from '@react-native-community/art';
 import * as Progress from 'react-native-progress';
@@ -18,9 +19,11 @@ export default class familydisplay extends React.Component {
             Name: '',
             FatherName: '',
             MotherName: '',
+            SpouseName: '',
             progress: 0,
             indeterminate: true,
             isloading: true,
+            bachelor: ''
         };
     }
     familysuggestion = () => {
@@ -35,6 +38,7 @@ export default class familydisplay extends React.Component {
                 this.setState({ Name: data.Name.Name })
                 this.setState({ FatherName: data.FatherData.Name })
                 this.setState({ MotherName: data.MotherData.Name })
+                // this.setState({ SpouseName: data.SpouseData.Name })
                 this.setState({ isloading: false })
             })
             .catch(err => {
@@ -84,19 +88,44 @@ export default class familydisplay extends React.Component {
                     </View>
                     :
                     <View style={styles.outerlayout}>
+                        <Grid style={styles.Grid}>
+                            <Col style={styles.column}>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>Name</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>FatherName</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>MotherName</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>Spouse Name</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>Sibling Name</Text>
+                                </Row>
+                            </Col>
 
-                        <View style={styles.NameOuter}>
-                            <View style={styles.NameInner1}>
-                                <Text style={styles.textStyle}>Fathername</Text>
-                                <Text style={styles.textdisplay}>{this.state.FatherName}</Text>
-                            </View>
-                            <View style={styles.NameInner2}>
-                                <Text style={styles.textStyle}>MotherName</Text>
-                                <Text style={styles.textdisplay}>{this.state.MotherName}</Text>
-                            </View>
-                        </View>
-                        {/* <View style={styles.lineStyle}>
-                        </View> */}
+                            <Col>
+                                <Row style={styles.row}>
+                                    <Text style={styles.text}>{this.state.Name}</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>{this.state.FatherName}</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>{this.state.MotherName}</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>{this.state.Name}</Text>
+                                </Row>
+                                <Row style={styles.row}>
+                                    <Text style={styles.textheader}>{this.state.Name}</Text>
+                                </Row>
+
+                            </Col>
+                        </Grid>
 
                     </View >
 
@@ -112,71 +141,46 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        flexDirection: "column"
+        flexDirection: "column",
+        backgroundColor: '#E0E0E0',
 
     },
-    textStyle: {
-        fontSize: 18,
-        textAlign: 'center',
-        fontFamily: "Verdana",
-        color: '#ffff',
-        paddingTop: 10,
-    },
-    textdisplay: {
-        fontSize: 14,
-        textAlign: 'center',
-        fontFamily: "Verdana",
-        color: '#37474F',
-        paddingBottom: 30,
-
-    },
-    lineStyle: {
-        borderWidth: 1,
-        borderColor: 'black',
-        marginLeft: 10,
-        height: 20,
-        flex: 1
-
-    },
-    NameOuter:
+    Grid:
     {
-        flex: 1,
-        flexDirection: "row",
+        margin: 10,
+        // borderColor: '#EEEEEE',
+
+
+
     },
-    NameInner1:
+    column:
     {
-        marginTop: 20,
+        marginRight: 5,
+
+    },
+    textheader:
+    {
+        fontSize: 20,
+        color: '#FAFAFA',
         marginLeft: 20,
-        marginRight: 20,
-        justifyContent: "space-around",
-        width: "45%",
-        height: 100,
-        borderRadius: 5,
-        backgroundColor: "#9E9E9E",
-        // position: "relative",
-        // top: 20,
-        alignSelf: "flex-start"
-
     },
-    NameInner2:
+    text:
     {
-        marginTop: 20,
-        marginLeft: 5,
-        marginRight: 20,
-        justifyContent: "space-between",
-        width: "45%",
-        height: 100,
-        borderRadius: 5,
-        backgroundColor: "#9E9E9E",
-        // position: "relative",
-        // top: 20,
-        alignSelf: "flex-start"
-
+        fontSize: 20,
+        color: '#FAFAFA'
     },
-    buttonStyle: {
-        width: "93%",
-        marginTop: 50,
-        backgroundColor: "red",
+    row:
+    {
+        marginBottom: 5,
+        backgroundColor: '#9E9E9E',
+        alignContent: "center",
+        textAlign: "center",
+        borderBottomLeftRadius: 10,
+        borderTopRightRadius: 10,
+        alignItems: "center",
+        paddingLeft: 10,
+        overflow: "scroll"
+
     },
     progress: {
         margin: 10,
