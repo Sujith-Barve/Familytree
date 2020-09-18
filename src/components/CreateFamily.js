@@ -1,6 +1,7 @@
 ﻿﻿import React, { Component, useState, useEffect, createRef } from 'react';
 import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
+import GoogleFonts from 'use-google-fonts'
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Feather';
@@ -31,7 +32,8 @@ export default class Aboutscreen extends React.Component {
                   childnametext: [],
                   Gendervalue: 'Male',
                   martialvalue: 'Bachelor',
-                  Havingchildren: 'Yes',
+                  Havingchildren: 'No',
+                  Havingsibling: 'No',
                   status: true,
                   hideshowstatus: true,
                   fatherdropvalue: 'None',
@@ -46,7 +48,9 @@ export default class Aboutscreen extends React.Component {
                   ChildGendervalue: 'Male',
                   Age: null,
                   isDateTimePickerVisible: false,
-                  selecteddate: ''
+                  selecteddate: '',
+                  textInput: [],
+                  inputData: [],
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
             };
@@ -54,7 +58,6 @@ export default class Aboutscreen extends React.Component {
       //  isEnabled = fatherlength > 0
       //       && motherlength > 0 && username.length > 0;
       // const [motherVisible, setMotherVisiblity] = useState(true);
-
 
       fatherArray = [];
       motherArray = [];
@@ -280,9 +283,77 @@ export default class Aboutscreen extends React.Component {
       onFocus = () => {
             this._handleDatePicked();
       }
+      addTextInput = (index) => {
+            let textInput = this.state.textInput;
+            textInput.push(
+                  <View>
+                        <TextInput style={{ marginLeft: 15, marginRight: 10 }}
+                              label="Child Name"
+                              mode="outlined"
+                              //      motherlength={value.length>0}
+                              onChangeText={(text) => this.addValues(text, index)}
 
+                        />
+                        {/* <Text style={{
+                              fontSize: 15, padding: 10,
+                              fontFamily: 'sans-serif-light'
+                        }}>Select Child Gender :</Text>
 
+                        <View style={styles.radio}>
+                              <RadioButton.Group
+                                    onValueChange={ChildGendervalue => this.setState({ ChildGendervalue })}
+                                    value={this.state.ChildGendervalue}
+                              >
+                                    <RadioButton color="#263238" value="Male" />
+                                    <Text style={styles.radiotext}>Male</Text>
+                                    <RadioButton color="#263238" value="Female" />
+                                    <Text style={styles.radiotext}>Female</Text>
+                                    <RadioButton color="#263238" value="Others" />
+                                    <Text style={styles.radiotext}>Others</Text>
+                              </RadioButton.Group>
+                        </View> */}
+                  </View>);
+            this.setState({ textInput });
+      }
 
+      //function to remove TextInput dynamically
+      removeTextInput = () => {
+            let textInput = this.state.textInput;
+            let inputData = this.state.inputData;
+            textInput.pop();
+            inputData.pop();
+            this.setState({ textInput, inputData });
+      }
+
+      //function to add text from TextInputs into single array
+      addValues = (text, index) => {
+            let dataArray = this.state.inputData;
+            let checkBool = false;
+            if (dataArray.length !== 0) {
+                  dataArray.forEach(element => {
+                        if (element.index === index) {
+                              element.text = text;
+                              checkBool = true;
+                        }
+                  });
+            }
+            if (checkBool) {
+                  this.setState({
+                        inputData: dataArray
+                  });
+            }
+            else {
+                  dataArray.push({ 'text': text, 'index': index });
+                  this.setState({
+                        inputData: dataArray
+                  });
+            }
+      }
+
+      //function to console the output
+      getValues = () => {
+            console.log('Data', this.state.inputData);
+      }
 
 
 
@@ -305,21 +376,11 @@ export default class Aboutscreen extends React.Component {
             //       )
             // }
       }
-      // showDatePicker = () => {
-      //       this.setState({ DatePickerVisibility: true });
-      // };
-
-      // hideDatePicker = () => {
-      //       this.setState({ DatePickerVisibility: false });
-      // };
-
-      // handleConfirm = (date) => {
-      //       console.warn("A date has been picked: ", date);
-      //       this.hideDatePicker();
-      // };
       render() {
             return (
+
                   <ScrollView style={styles.root}>
+                        {/* <GoogleFonts fonts={['Lobster']} /> */}
                         <View style={styles.usersback}>
                               <TextInput style={styles.inputda}
                                     label="Name"
@@ -380,29 +441,6 @@ export default class Aboutscreen extends React.Component {
                                           datePickerModeAndroid={'spinner'}
 
                                     />
-                                    {/* <DatePicker
-                                          style={styles.date}
-                                          date={this.state.date} //initial date from state
-                                          mode="date" //The enum of date, datetime and time
-                                          placeholder="select date"
-                                          format="DD-MM-YYYY"
-                                          minDate="01-01-2016"
-                                          maxDate="01-01-2019"
-                                          confirmBtnText="Confirm"
-                                          cancelBtnText="Cancel"
-                                          customStyles={{
-                                                dateIcon: {
-                                                      position: 'absolute',
-                                                      left: 0,
-                                                      top: 4,
-                                                      marginLeft: 0
-                                                },
-                                                dateInput: {
-                                                      marginLeft: 36
-                                                }
-                                          }}
-                                          onDateChange={(date) => { this.setState({ date: date }) }}
-                                    /> */}
                               </View>
                         </View>
                         <View style={styles.fathers}>
@@ -480,6 +518,60 @@ export default class Aboutscreen extends React.Component {
                               }
                         </View>
 
+                        {/*Siblings Start*/}
+                        <View style={{ flexDirection: "row" }}>
+                              <Text style={{ margin: 10, fontSize: 15, fontFamily }}>Having Sibling</Text>
+                              <View style={styles.radio}>
+                                    <RadioButton.Group
+                                          onValueChange={Havingsibling => this.setState({ Havingsibling })}
+                                          value={this.state.Havingsibling}
+                                    >
+                                          <RadioButton color="#263238" value="Yes" />
+                                          <Text style={styles.radiotext}>Yes</Text>
+                                          <RadioButton color="#263238" value="No" />
+                                          <Text style={styles.radiotext}>No</Text>
+                                    </RadioButton.Group>
+                              </View>
+                        </View>
+
+                        {this.state.Havingsibling == "Yes" ?
+                              <ScrollView>
+                                    <View style={styles.row}>
+                                          <View style={{ margin: 10 }}>
+                                                <Button
+                                                      style={styles.Buttonstyle}
+                                                      mode="contained"
+                                                      onPress={() => this.addTextInput(this.state.textInput.length)}
+                                                      title='Add'>
+                                                      Add Child
+                                                            </Button>
+                                          </View>
+                                          <View style={{ margin: 10 }}>
+                                                <Button
+                                                      style={styles.Buttonstyle}
+                                                      mode="contained"
+                                                      onPress={() => this.removeTextInput()}
+                                                      title='Remove'>
+                                                      Remove Child
+                                                            </Button>
+                                          </View>
+                                    </View>
+                                    {this.state.textInput.map((value) => {
+                                          return value
+                                    })}
+                                    {/* <TextInput style={styles.inputda}
+                                                      label="Child Name"
+                                                      mode="outlined"
+                                                      value={this.state.ChildName}
+                                                      onChangeText={ChildName => this.setState({ ChildName })}
+                                                /> */}
+
+
+                              </ScrollView>
+                              : null}
+
+                        {/*Siblings End*/}
+
                         <View style={styles.radio}>
                               <RadioButton.Group
                                     onValueChange={martialvalue => this.setState({ martialvalue })}
@@ -553,50 +645,58 @@ export default class Aboutscreen extends React.Component {
                                                       </View>
                                           }
                                     </View>
-
-                                    <Text style={{ margin: 10, fontSize: 15 }}>Having Children</Text>
-                                    <View style={styles.radio}>
-                                          <RadioButton.Group
-                                                onValueChange={Havingchildren => this.setState({ Havingchildren })}
-                                                value={this.state.Havingchildren}
-                                          >
-                                                <RadioButton color="#263238" value="Yes" />
-                                                <Text style={styles.radiotext}>Yes</Text>
-                                                <RadioButton color="#263238" value="No" />
-                                                <Text style={styles.radiotext}>No</Text>
-                                          </RadioButton.Group>
+                                    <View style={{ flexDirection: "row" }}>
+                                          <Text style={{ margin: 10, fontSize: 15 }}>Having Children</Text>
+                                          <View style={styles.radio}>
+                                                <RadioButton.Group
+                                                      onValueChange={Havingchildren => this.setState({ Havingchildren })}
+                                                      value={this.state.Havingchildren}
+                                                >
+                                                      <RadioButton color="#263238" value="Yes" />
+                                                      <Text style={styles.radiotext}>Yes</Text>
+                                                      <RadioButton color="#263238" value="No" />
+                                                      <Text style={styles.radiotext}>No</Text>
+                                                </RadioButton.Group>
+                                          </View>
                                     </View>
 
                                     {this.state.Havingchildren == "Yes" ?
-                                          <View style={styles.fathers}>
-                                                <TextInput style={styles.inputda}
+                                          <ScrollView>
+                                                <View style={styles.row}>
+                                                      <View style={{ margin: 10 }}>
+                                                            <Button
+                                                                  style={styles.Buttonstyle}
+                                                                  mode="contained"
+                                                                  onPress={() => this.addTextInput(this.state.textInput.length)}
+                                                                  title='Add'>
+                                                                  Add Child
+                                                            </Button>
+                                                      </View>
+                                                      <View style={{ margin: 10 }}>
+                                                            <Button
+                                                                  style={styles.Buttonstyle}
+                                                                  mode="contained"
+                                                                  onPress={() => this.removeTextInput()}
+                                                                  title='Remove'>
+                                                                  Remove Child
+                                                            </Button>
+                                                      </View>
+                                                </View>
+                                                {this.state.textInput.map((value) => {
+                                                      return value
+                                                })}
+                                                {/* <TextInput style={styles.inputda}
                                                       label="Child Name"
                                                       mode="outlined"
                                                       value={this.state.ChildName}
                                                       onChangeText={ChildName => this.setState({ ChildName })}
-                                                />
-                                                <Text style={{
-                                                      fontSize: 15, padding: 10,
-                                                      fontFamily: 'sans-serif-light'
-                                                }}>Select Child Gender :</Text>
+                                                /> */}
 
-                                                <View style={styles.radio}>
-                                                      <RadioButton.Group
-                                                            onValueChange={ChildGendervalue => this.setState({ ChildGendervalue })}
-                                                            value={this.state.ChildGendervalue}
-                                                      >
-                                                            <RadioButton color="#263238" value="Male" />
-                                                            <Text style={styles.radiotext}>Male</Text>
-                                                            <RadioButton color="#263238" value="Female" />
-                                                            <Text style={styles.radiotext}>Female</Text>
-                                                            <RadioButton color="#263238" value="Others" />
-                                                            <Text style={styles.radiotext}>Others</Text>
-                                                      </RadioButton.Group>
-                                                </View>
 
-                                          </View>
+                                          </ScrollView>
                                           : null}
                               </View>
+
                               : null}
                         <View
                               style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -689,6 +789,11 @@ const styles = StyleSheet.create({
             margin: 5,
             borderColor: 'blue'
       },
+      Buttonstyle:
+      {
+            backgroundColor: "#3F51B5",
+            width: 150
+      },
       submitButtonr:
       {
             justifyContent: 'flex-end',
@@ -729,7 +834,22 @@ const styles = StyleSheet.create({
             borderRadius: 10,
             borderWidth: 2,
             marginBottom: 10
-      }
+      },
+      buttonView: {
+            flex: 1,
+            flexDirection: 'row'
+      },
+      textInputextra: {
+            height: 40,
+            borderColor: 'black',
+            borderWidth: 1,
+            margin: 20
+      },
+      row: {
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'center'
+      },
 
 
 });

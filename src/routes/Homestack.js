@@ -12,7 +12,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import home from '../components/Home';
 import Search from '../components/SearchBar'
 import familyadd from '../components/familyadd';
-import fampage from '../components/Familypage';
+import fampage from '../components/CreateFamily';
 import SideMenu from '../components/Sidemenu'
 import Display from '../components/DispalayFamily'
 

@@ -19,6 +19,7 @@
     "body-parser": "^1.19.0",
     "events": "^3.2.0",
     "express": "^4.17.1",
+    "google-fonts": "^1.0.0",
     "http": "0.0.1-security",
     "radio-buttons-react-native": "^1.0.4",
     "react": "16.13.1",
@@ -45,7 +46,8 @@
     "react-navigation-stack": "^2.8.2",
     "reflect-metadata": "^0.1.13",
     "switch-react-native": "^1.0.9",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25",
+    "use-google-fonts": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.10.5",
