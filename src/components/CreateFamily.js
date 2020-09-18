@@ -12,7 +12,7 @@ import { sub } from 'react-native-reanimated';
 import { LOGIN_USER_ID } from '../../Constants'
 var originalFather = [];
 var originalMother = [];
-var i, manualentry, Fat_name, fat_ID, Mot_ID;
+var i, manualentry, Fat_name, fat_ID, Mot_ID, Spouse_ID;
 
 // var submitpercentage = 1;
 export default class Aboutscreen extends React.Component {
@@ -50,7 +50,9 @@ export default class Aboutscreen extends React.Component {
                   isDateTimePickerVisible: false,
                   selecteddate: '',
                   textInput: [],
+                  textInputSibling: [],
                   inputData: [],
+                  inputDataSibling: [],
                   // enabletextInput:'TextInputv',
                   // enabletextInp : 'TextInputv',
             };
@@ -159,6 +161,10 @@ export default class Aboutscreen extends React.Component {
       componentWillUnmount() {
             this.backHandler.remove();
       }
+      componentWillUnmount() {
+            this.getMotherdata();
+            this.getfatherdata();
+      }
       // componentDidUpdate(prevProps, prevState) {
       //       // Typical usage (don't forget to compare props):
       //       if (this.state.Gender !== prevProps.userID) {
@@ -228,11 +234,12 @@ export default class Aboutscreen extends React.Component {
                         Spouse_ID: Spouse_ID,
                         MarriageStatus: this.state.martialvalue,
                         WifeName: this.state.SpouseName,
-                        ChildName: this.state.ChildName,
                         ChildGender: this.state.ChildGendervalue,
                         Age: this.state.Age,
                         ChildGender: this.state.Gendervalue,
                         Havingchildren: this.state.Havingchildren,
+                        Siblings: this.state.inputDataSibling,
+                        ChildrenName: this.state.inputData
 
                   })
             }).then(res => res.json())
@@ -255,6 +262,7 @@ export default class Aboutscreen extends React.Component {
 
                   })
                   .catch(err => {
+                        console.log('Data', this.state.inputData + "Sibling data are" + this.state.inputDataSibling);
                         Alert.alert("someting went wrong either user exists or unable to connect to server");
                   })
       }
@@ -283,70 +291,105 @@ export default class Aboutscreen extends React.Component {
       onFocus = () => {
             this._handleDatePicked();
       }
-      addTextInput = (index) => {
-            let textInput = this.state.textInput;
-            textInput.push(
-                  <View>
-                        <TextInput style={{ marginLeft: 15, marginRight: 10 }}
-                              label="Child Name"
-                              mode="outlined"
-                              //      motherlength={value.length>0}
-                              onChangeText={(text) => this.addValues(text, index)}
+      addTextInput = (index, str) => {
+            if (str == "Child") {
+                  let textInput = this.state.textInput;
+                  textInput.push(
+                        <View>
+                              <TextInput style={{ marginLeft: 15, marginRight: 10 }}
+                                    label="Child Name"
+                                    mode="outlined"
+                                    //      motherlength={value.length>0}
+                                    onChangeText={(text) => this.addValues(text, index, "Child")}
 
-                        />
-                        {/* <Text style={{
-                              fontSize: 15, padding: 10,
-                              fontFamily: 'sans-serif-light'
-                        }}>Select Child Gender :</Text>
+                              />
+                        </View>
+                  );
+                  this.setState({ textInput });
+            }
+            else {
+                  console.log("Entered Sibling")
+                  let textInputSibling = this.state.textInputSibling;
+                  textInputSibling.push(
+                        <View>
+                              <TextInput style={{ marginLeft: 15, marginRight: 10 }}
+                                    label="Sibling Name"
+                                    mode="outlined"
+                                    //      motherlength={value.length>0}
+                                    onChangeText={(text) => this.addValues(text, index, "Siblings")}
 
-                        <View style={styles.radio}>
-                              <RadioButton.Group
-                                    onValueChange={ChildGendervalue => this.setState({ ChildGendervalue })}
-                                    value={this.state.ChildGendervalue}
-                              >
-                                    <RadioButton color="#263238" value="Male" />
-                                    <Text style={styles.radiotext}>Male</Text>
-                                    <RadioButton color="#263238" value="Female" />
-                                    <Text style={styles.radiotext}>Female</Text>
-                                    <RadioButton color="#263238" value="Others" />
-                                    <Text style={styles.radiotext}>Others</Text>
-                              </RadioButton.Group>
-                        </View> */}
-                  </View>);
-            this.setState({ textInput });
+                              />
+                        </View>);
+                  this.setState({ textInputSibling });
+            }
       }
 
       //function to remove TextInput dynamically
-      removeTextInput = () => {
-            let textInput = this.state.textInput;
-            let inputData = this.state.inputData;
-            textInput.pop();
-            inputData.pop();
-            this.setState({ textInput, inputData });
+      removeTextInput = (str) => {
+            if (str == "Child") {
+                  let textInput = this.state.textInput;
+                  let inputData = this.state.inputData;
+                  textInput.pop();
+                  inputData.pop();
+                  this.setState({ textInput, inputData });
+            }
+            else {
+                  let textInputSibling = this.state.textInputSibling;
+                  let inputDataSibling = this.state.inputDataSibling;
+                  textInputSibling.pop();
+                  inputDataSibling.pop();
+                  this.setState({ textInputSibling, inputDataSibling });
+            }
       }
 
       //function to add text from TextInputs into single array
-      addValues = (text, index) => {
-            let dataArray = this.state.inputData;
-            let checkBool = false;
-            if (dataArray.length !== 0) {
-                  dataArray.forEach(element => {
-                        if (element.index === index) {
-                              element.text = text;
-                              checkBool = true;
-                        }
-                  });
-            }
-            if (checkBool) {
-                  this.setState({
-                        inputData: dataArray
-                  });
+      addValues = (text, index, str) => {
+            if (str == "Child") {
+                  let dataArray = this.state.inputData;
+                  let checkBool = false;
+                  if (dataArray.length !== 0) {
+                        dataArray.forEach(element => {
+                              if (element.index === index) {
+                                    element.text = text;
+                                    checkBool = true;
+                              }
+                        });
+                  }
+                  if (checkBool) {
+                        this.setState({
+                              inputData: dataArray
+                        });
+                  }
+                  else {
+                        dataArray.push({ 'text': text, 'index': index });
+                        this.setState({
+                              inputData: dataArray
+                        });
+                  }
             }
             else {
-                  dataArray.push({ 'text': text, 'index': index });
-                  this.setState({
-                        inputData: dataArray
-                  });
+                  console.log("Entered add values")
+                  let dataArray = this.state.inputDataSibling;
+                  let checkBool = false;
+                  if (dataArray.length !== 0) {
+                        dataArray.forEach(element => {
+                              if (element.index === index) {
+                                    element.text = text;
+                                    checkBool = true;
+                              }
+                        });
+                  }
+                  if (checkBool) {
+                        this.setState({
+                              inputDataSibling: dataArray
+                        });
+                  }
+                  else {
+                        dataArray.push({ 'text': text, 'index': index });
+                        this.setState({
+                              inputDataSibling: dataArray
+                        });
+                  }
             }
       }
 
@@ -520,7 +563,7 @@ export default class Aboutscreen extends React.Component {
 
                         {/*Siblings Start*/}
                         <View style={{ flexDirection: "row" }}>
-                              <Text style={{ margin: 10, fontSize: 15, fontFamily }}>Having Sibling</Text>
+                              <Text style={{ margin: 10, fontSize: 15 }}>Having Sibling</Text>
                               <View style={styles.radio}>
                                     <RadioButton.Group
                                           onValueChange={Havingsibling => this.setState({ Havingsibling })}
@@ -541,7 +584,7 @@ export default class Aboutscreen extends React.Component {
                                                 <Button
                                                       style={styles.Buttonstyle}
                                                       mode="contained"
-                                                      onPress={() => this.addTextInput(this.state.textInput.length)}
+                                                      onPress={() => this.addTextInput(this.state.textInputSibling.length, "Siblings")}
                                                       title='Add'>
                                                       Add Child
                                                             </Button>
@@ -556,7 +599,7 @@ export default class Aboutscreen extends React.Component {
                                                             </Button>
                                           </View>
                                     </View>
-                                    {this.state.textInput.map((value) => {
+                                    {this.state.textInputSibling.map((value) => {
                                           return value
                                     })}
                                     {/* <TextInput style={styles.inputda}
@@ -667,7 +710,7 @@ export default class Aboutscreen extends React.Component {
                                                             <Button
                                                                   style={styles.Buttonstyle}
                                                                   mode="contained"
-                                                                  onPress={() => this.addTextInput(this.state.textInput.length)}
+                                                                  onPress={() => this.addTextInput(this.state.textInput.length, "Child")}
                                                                   title='Add'>
                                                                   Add Child
                                                             </Button>

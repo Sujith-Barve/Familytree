@@ -65,7 +65,9 @@ export default class familydisplay extends React.Component {
         this.familysuggestion();
     }
 
-
+    componentWillUnmount() {
+        this.familysuggestion();
+    }
     render() {
         const { navigation } = this.props;
         key = navigation.getParam('key', '123');

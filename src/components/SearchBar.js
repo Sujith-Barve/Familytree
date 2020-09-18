@@ -90,6 +90,9 @@ export default class Searchbar extends React.Component {
     this.animate();
     this.familysuggestion();
   }
+  componentWillUnmount() {
+    this.familysuggestion();
+  }
 
   render() {
     const { navigate } = this.props.navigation;
