@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "google-fonts": "^1.0.0",
     "http": "0.0.1-security",
+    "json-stringify-safe": "^5.0.1",
     "radio-buttons-react-native": "^1.0.4",
     "react": "16.13.1",
     "react-native": "0.63.1",
@@ -45,6 +46,7 @@
     "react-navigation-drawer": "^2.5.0",
     "react-navigation-stack": "^2.8.2",
     "reflect-metadata": "^0.1.13",
+    "smart-circular": "^1.0.2",
     "switch-react-native": "^1.0.9",
     "typeorm": "^0.2.25",
     "use-google-fonts": "^1.0.2"

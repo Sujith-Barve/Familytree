@@ -1,8 +1,9 @@
 ﻿﻿import React, { Component, useState, useEffect, createRef } from 'react';
 import { Alert, View, Text, StyleSheet, TouchableOpacity, value, BackHandler, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton } from 'react-native-paper';
-import GoogleFonts from 'use-google-fonts'
+var stringify = require('json-stringify-safe');
 import SwitchSelector from "react-native-switch-selector";
+var stringify = require('json-stringify-safe');
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/Feather';
 // import DropDownPicker from 'react-native-dropdown-picker';
@@ -52,9 +53,12 @@ export default class Aboutscreen extends React.Component {
                   textInput: [],
                   textInputSibling: [],
                   inputData: [],
+                  SiblingGender: [],
+                  ChildrenGender: [],
                   inputDataSibling: [],
-                  // enabletextInput:'TextInputv',
-                  // enabletextInp : 'TextInputv',
+                  Gendervaluesibling: 'Male',
+                  GendervalueChildren: 'Male'
+
             };
       }
       //  isEnabled = fatherlength > 0
@@ -176,6 +180,7 @@ export default class Aboutscreen extends React.Component {
             // let obj = originalFather[parseInt(myRef.current.selectedIndex())]
             // let selectedFatherId = obj._id.toString()
             // console.log(selectedFatherId) 
+            this.getValues();
             if (this.state.switchValue == "0") {
                   this.setState({ fathermanualentry: true });
                   // console.log("Switch value is zero" + this.state.fathermanualentry)
@@ -215,6 +220,21 @@ export default class Aboutscreen extends React.Component {
             // "Father Id is" +fat_ID,
             // "Mother ID is" +Mot_ID)
             // console.log("=============== " + this.refs['picker'].value(), "Fatgerva; is " + this.refs['pickers'].value())
+            let childrenCircularObj = this.state.inputData;
+            console.log("ChildrenData is ", childrenCircularObj)
+            var childrens = []
+            if (childrenCircularObj.length !== 0) {
+                  childrenCircularObj.forEach(element => {
+                        childrens.push(element.text)
+                  });
+            }
+            let siblingsCircularObj = this.state.inputDataSibling;
+            var siblings = []
+            if (siblingsCircularObj.length !== 0) {
+                  siblingsCircularObj.forEach(element => {
+                        siblings.push(element.text)
+                  });
+            }
             fetch("http://192.168.43.131:3000/create-person", {
                   method: "post",
                   headers: {
@@ -238,8 +258,9 @@ export default class Aboutscreen extends React.Component {
                         Age: this.state.Age,
                         ChildGender: this.state.Gendervalue,
                         Havingchildren: this.state.Havingchildren,
-                        Siblings: this.state.inputDataSibling,
-                        ChildrenName: this.state.inputData
+                        Havingsibling: this.state.Havingsibling,
+                        Siblings: siblings,
+                        ChildrenName: childrens,
 
                   })
             }).then(res => res.json())
@@ -262,7 +283,8 @@ export default class Aboutscreen extends React.Component {
 
                   })
                   .catch(err => {
-                        console.log('Data', this.state.inputData + "Sibling data are" + this.state.inputDataSibling);
+                        console.log('Data', this.state.inputData + "Sibling data are" +
+                              JSON.stringify(this.state.inputDataSibling));
                         Alert.alert("someting went wrong either user exists or unable to connect to server");
                   })
       }
@@ -296,13 +318,34 @@ export default class Aboutscreen extends React.Component {
                   let textInput = this.state.textInput;
                   textInput.push(
                         <View>
+                              {/* <Text style={{
+                                    fontSize: 15, paddingTop: 10,
+                                    paddingLeft: 10,
+                                    paddingRight: 10, fontFamily: 'sans-serif-light'
+                              }}>Select Your Gender :</Text>
+                              <View style={styles.radio}>
+                                    <RadioButton.Group
+                                          onValueChange={GendervalueChildren =>
+                                                this.setState({ GendervalueChildren })}
+                                          value={this.state.GendervalueChildren}
+                                    >
+                                          <RadioButton color="#263238" value="Male" />
+                                          <Text style={styles.radiotext}>Male</Text>
+                                          <RadioButton color="#263238" value="Female" />
+                                          <Text style={styles.radiotext}>Female</Text>
+                                          <RadioButton color="#263238" value="Others" />
+                                          <Text style={styles.radiotext}>Others</Text>
+
+                                    </RadioButton.Group>
+                              </View> */}
                               <TextInput style={{ marginLeft: 15, marginRight: 10 }}
                                     label="Child Name"
                                     mode="outlined"
                                     //      motherlength={value.length>0}
-                                    onChangeText={(text) => this.addValues(text, index, "Child")}
+                                    onChangeText={(text) => this.addValues(text, index, "Child", this.state.GendervalueChildren)}
 
                               />
+
                         </View>
                   );
                   this.setState({ textInput });
@@ -312,6 +355,25 @@ export default class Aboutscreen extends React.Component {
                   let textInputSibling = this.state.textInputSibling;
                   textInputSibling.push(
                         <View>
+                              {/* <Text style={{
+                                    fontSize: 15, paddingTop: 10,
+                                    paddingLeft: 10,
+                                    paddingRight: 10, fontFamily: 'sans-serif-light'
+                              }}>Select Your Gender :</Text>
+                              <View style={styles.radio}>
+                                    <RadioButton.Group
+                                          onValueChange={Gendervaluesibling => this.setState({ Gendervaluesibling })}
+                                          value={this.state.Gendervaluesibling}
+                                    >
+                                          <RadioButton color="#263238" value="Male" />
+                                          <Text style={styles.radiotext}>Male</Text>
+                                          <RadioButton color="#263238" value="Female" />
+                                          <Text style={styles.radiotext}>Female</Text>
+                                          <RadioButton color="#263238" value="Others" />
+                                          <Text style={styles.radiotext}>Others</Text>
+
+                                    </RadioButton.Group>
+                              </View> */}
                               <TextInput style={{ marginLeft: 15, marginRight: 10 }}
                                     label="Sibling Name"
                                     mode="outlined"
@@ -327,6 +389,7 @@ export default class Aboutscreen extends React.Component {
       //function to remove TextInput dynamically
       removeTextInput = (str) => {
             if (str == "Child") {
+                  console.log("enterd remove child")
                   let textInput = this.state.textInput;
                   let inputData = this.state.inputData;
                   textInput.pop();
@@ -343,7 +406,7 @@ export default class Aboutscreen extends React.Component {
       }
 
       //function to add text from TextInputs into single array
-      addValues = (text, index, str) => {
+      addValues = (text, index, str, Gender) => {
             if (str == "Child") {
                   let dataArray = this.state.inputData;
                   let checkBool = false;
@@ -392,10 +455,32 @@ export default class Aboutscreen extends React.Component {
                   }
             }
       }
+      // replaceCircular = function (val, cache) {
+
+      //       cache = cache || new WeakSet();
+
+      //       if (val && typeof (val) == 'object') {
+      //             if (cache.has(val)) return '[Circular]';
+
+      //             cache.add(val);
+
+      //             var obj = (Array.isArray(val) ? [] : {});
+      //             for (var idx in val) {
+      //                   obj[idx] = replaceCircular(val[idx], cache);
+      //             }
+
+      //             cache.delete(val);
+      //             return obj;
+      //       }
+
+      //       return val;
+      // };
 
       //function to console the output
       getValues = () => {
-            console.log('Data', this.state.inputData);
+            console.log('Data', JSON.stringify(this.state.inputData));
+
+
       }
 
 
@@ -593,7 +678,7 @@ export default class Aboutscreen extends React.Component {
                                                 <Button
                                                       style={styles.Buttonstyle}
                                                       mode="contained"
-                                                      onPress={() => this.removeTextInput()}
+                                                      onPress={() => this.removeTextInput("Siblings")}
                                                       title='Remove'>
                                                       Remove Child
                                                             </Button>
@@ -719,7 +804,7 @@ export default class Aboutscreen extends React.Component {
                                                             <Button
                                                                   style={styles.Buttonstyle}
                                                                   mode="contained"
-                                                                  onPress={() => this.removeTextInput()}
+                                                                  onPress={() => this.removeTextInput("Child")}
                                                                   title='Remove'>
                                                                   Remove Child
                                                             </Button>
