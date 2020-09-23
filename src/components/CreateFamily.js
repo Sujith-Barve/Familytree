@@ -253,14 +253,14 @@ export default class Aboutscreen extends React.Component {
                         Mother_ID: Mot_ID,
                         Spouse_ID: Spouse_ID,
                         MarriageStatus: this.state.martialvalue,
-                        WifeName: this.state.SpouseName,
+                        Wife: this.state.SpouseName,
                         ChildGender: this.state.ChildGendervalue,
                         Age: this.state.Age,
                         ChildGender: this.state.Gendervalue,
                         Havingchildren: this.state.Havingchildren,
                         Havingsibling: this.state.Havingsibling,
                         Siblings: siblings,
-                        ChildrenName: childrens,
+                        Son: childrens,
 
                   })
             }).then(res => res.json())
@@ -284,13 +284,13 @@ export default class Aboutscreen extends React.Component {
                   })
                   .catch(err => {
                         console.log('Data', this.state.inputData + "Sibling data are" +
-                              JSON.stringify(this.state.inputDataSibling));
+                              JSON.stringify(this.state.inputDataSibling) + err);
                         Alert.alert("someting went wrong either user exists or unable to connect to server");
                   })
       }
 
       getDropdownDataServer = () => {
-            console.log("Entered The getdata ][[[[[[[[[[[[[[[[[[[]]]]]]")
+            console.log("Entered The getdata ")
             this.getMotherdata();
             this.getfatherdata();
       }

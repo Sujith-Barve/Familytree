@@ -19,8 +19,10 @@ export default class familydisplay extends React.Component {
             Name: '',
             FatherName: '',
             MotherName: '',
-            SpouseName: '',
+            SpouseName: null,
+            Siblings: [],
             progress: 0,
+            SiblingView: [],
             indeterminate: true,
             isloading: true,
             bachelor: ''
@@ -38,6 +40,8 @@ export default class familydisplay extends React.Component {
                 this.setState({ Name: data.Name.Name })
                 this.setState({ FatherName: data.FatherData.Name })
                 this.setState({ MotherName: data.MotherData.Name })
+                this.setState({ Siblings: data.Siblings })
+
                 // this.setState({ SpouseName: data.SpouseData.Name })
                 this.setState({ isloading: false })
             })
@@ -67,6 +71,19 @@ export default class familydisplay extends React.Component {
 
     componentWillUnmount() {
         this.familysuggestion();
+    }
+    addTextInput = (length, str) => {
+        if (str == "Child") {
+            let SiblingView = this.state.SiblingView;
+            SiblingView.push(
+                <View>
+                    <Row style={styles.row}>
+                        <Text style={styles.textheader}>Sibling Name</Text>
+                    </Row>
+                </View>
+            );
+            this.setState({ textInput });
+        }
     }
     render() {
         const { navigation } = this.props;
@@ -101,12 +118,23 @@ export default class familydisplay extends React.Component {
                                 <Row style={styles.row}>
                                     <Text style={styles.textheader}>MotherName</Text>
                                 </Row>
-                                <Row style={styles.row}>
-                                    <Text style={styles.textheader}>Spouse Name</Text>
-                                </Row>
-                                <Row style={styles.row}>
-                                    <Text style={styles.textheader}>Sibling Name</Text>
-                                </Row>
+                                {
+                                    this.state.SpouseName != null
+                                        ?
+                                        <Row style={styles.row}>
+                                            <Text style={styles.textheader}>Spouse Name</Text>
+                                        </Row>
+                                        : null
+                                }
+
+                                {
+                                    this.state.SiblingView.map((value) => {
+                                        return value
+                                    })
+                                }
+
+
+
                             </Col>
 
                             <Col>
@@ -119,9 +147,14 @@ export default class familydisplay extends React.Component {
                                 <Row style={styles.row}>
                                     <Text style={styles.textheader}>{this.state.MotherName}</Text>
                                 </Row>
-                                <Row style={styles.row}>
-                                    <Text style={styles.textheader}>{this.state.Name}</Text>
-                                </Row>
+                                {
+                                    (this.state.SpouseName != null)
+                                        ?
+                                        <Row style={styles.row}>
+                                            <Text style={styles.textheader}>{this.state.Name}</Text>
+                                        </Row>
+                                        : null
+                                }
                                 <Row style={styles.row}>
                                     <Text style={styles.textheader}>{this.state.Name}</Text>
                                 </Row>
